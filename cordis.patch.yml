@@ -1,0 +1,14 @@
+# dsh-cost-meter bundle layer: inserts the plugin row into the profile's
+# loader tree. Applied automatically because package.json declares
+# `dsh.bundle.patch`. Prices and tariff windows are editable from the Web GUI
+# (Settings -> Cost Meter) or here, e.g.:
+#
+#   - id: dsh-cost-meter
+#     config:
+#       currency: '$'
+#       usdRate: 1
+#
+- insert:
+    - id: dsh-cost-meter
+      name: 'dsh-cost-meter'
+      config: {}
