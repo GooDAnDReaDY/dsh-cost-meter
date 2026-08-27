@@ -55,15 +55,17 @@
 `displayTimeZone` (по умолчанию московской) через `Intl`, так что переход на
 летнее время учитывается. Если окон нет — одна колонка «ставка» без подсветки.
 
-## Установка
+## Установка из приватного registry
 
 ```bash
-dsh plugin --profile web add file:/path/to/dsh-cost-meter
-sudo systemctl restart dsh-web        # или перезапустите dsh web вручную
+dsh plugin --profile web add @goodandready-private/dsh-cost-meter
+sudo systemctl restart dsh-web
 ```
 
-Локальные плагины подключайте через `file:`, а не `link:` — при `link:` Node
-резолвит импорты от реального пути вне профиля и не находит peer-зависимости.
+Пакет публикуется в приватный GitHub Packages registry. Исходная разработка,
+изолированная проверка и production-установка выполняются через Git и пакетный
+маршрут; локальные установки из исходного checkout не являются поддерживаемым
+способом развёртывания.
 
 ## Конфигурация
 
