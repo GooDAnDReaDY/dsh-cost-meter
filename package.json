@@ -1,5 +1,5 @@
 {
-  "name": "dsh-cost-meter",
+  "name": "@goodandready-private/dsh-cost-meter",
   "version": "0.7.0",
   "description": "DeepSeek Harness plugin: a session cost chip in the conversation header - live token usage by bucket, peak/off-peak tariff, and a countdown to the next tariff switch.",
   "type": "module",
@@ -14,10 +14,16 @@
     "lib",
     "cordis.patch.yml",
     "README.md",
+    "docs",
     "LICENSE"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "dsh": {
-    "bundle": { "patch": "./cordis.patch.yml" },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "platform": "web",
       "inject": [
@@ -35,9 +41,17 @@
     "pricing"
   ],
   "license": "MIT",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
   }
 }
