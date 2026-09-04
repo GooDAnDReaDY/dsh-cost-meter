@@ -26,7 +26,10 @@ test('published docs do not prescribe local installs or machine-specific paths',
   const indexSource = await readFile(new URL('../lib/index.js', import.meta.url), 'utf8')
   assert.doesNotMatch(indexSource, /\/home\/vadim|192\.168\.|codex_migrate|file:/i)
   assert.match(indexSource, /homedir\(\)/)
-  assert.equal(root.endsWith('dsh-cost-meter/'), true)
+  assert.ok(
+    root.endsWith('dsh-cost-meter/') || root.includes('/dsh-cost-meter/.worktrees/'),
+    'package must live in the canonical dsh-cost-meter directory or its worktree'
+  )
 })
 
 test('tarball metadata keeps only the private package name', () => {
