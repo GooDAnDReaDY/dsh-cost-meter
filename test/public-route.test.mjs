@@ -1,3 +1,5 @@
+import path from 'node:path';
+import fs from 'node:fs';
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
@@ -58,3 +60,42 @@ test('tariff helpers preserve route matching and UTC window parsing', async () =
   assert.equal(deepseek.source, 'deepseek')
   assert.equal(deepseek.schedule.windows.length, 2)
 })
+
+test("client loader factory executes cleanly without reference errors", async () => {
+  const clientPath = path.join(root, "lib", "client.js");
+  const code = fs.readFileSync(clientPath, "utf8");
+
+  let loadedDef = null;
+  const mockWindow = {
+    __ModuleLoader__: {
+      load: (def) => {
+        loadedDef = def;
+      }
+    }
+  };
+
+  const fn = new Function("window", "require", "module", "exports", code);
+  const fakeRequire = (name) => {
+    if (name === "react") {
+      return {
+        createElement: () => ({}),
+        useEffect: () => {},
+        useState: (init) => [init, () => {}],
+        useCallback: (fn) => fn,
+        useMemo: (fn) => fn()
+      };
+    }
+    return {};
+  };
+
+  fn(mockWindow, fakeRequire, { exports: {} }, {});
+  assert.ok(loadedDef, "module definition was registered with window.__ModuleLoader__");
+  assert.equal(loadedDef.id, "@goodandready/dsh-cost-meter");
+  
+  // Execute factory
+  const modExports = loadedDef.factory(fakeRequire);
+  assert.ok(modExports, "factory executed cleanly");
+  assert.equal(typeof modExports.apply, "function");
+  assert.ok(Array.isArray(modExports.inject));
+});
+

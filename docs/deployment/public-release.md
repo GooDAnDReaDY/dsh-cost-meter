@@ -1,6 +1,6 @@
 # Публичный релиз и deployment
 
-Релизная версия повышается patch-изменением (v0.7.4). После merge в `main`
+Релизная версия повышается patch-изменением (v0.7.6). После merge в `main`
 создаются annotated tag, пакет в npm (`@goodandready/dsh-cost-meter`) и
 публичный GitHub release в `GooDAnDReaDY/dsh-cost-meter`.
 
