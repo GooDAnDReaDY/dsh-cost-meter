@@ -2,7 +2,7 @@
 set -euo pipefail
 
 PROFILE="${DSH_PROFILE:-web}"
-PACKAGE="@goodandready-private/dsh-cost-meter"
+PACKAGE="@goodandready/dsh-cost-meter"
 
 dsh plugin --profile "$PROFILE" remove dsh-cost-meter || true
 dsh plugin --profile "$PROFILE" add "$PACKAGE"
