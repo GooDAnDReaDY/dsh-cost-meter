@@ -1,78 +1,134 @@
-# dsh-cost-meter
+# 📦 @goodandready/dsh-cost-meter
 
-Чип стоимости сессии в шапке диалога DeepSeek Harness: живой расход по токенам,
-текущий тариф (пик / не-пик), обратный отсчёт до его смены и карточка настроек.
+<div align="center">
 
+<h3>Live Session Cost Chip, Peak/Off-Peak Tariff Switcher & Token Pricing for DeepSeek Harness</h3>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@goodandready/dsh-cost-meter"><img src="https://img.shields.io/npm/v/@goodandready/dsh-cost-meter.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/GooDAnDReaDY/dsh-cost-meter.svg?style=for-the-badge&color=10b981&labelColor=064e3b" alt="license"></a>
+  <a href="https://github.com/topics/dsh-plugin"><img src="https://img.shields.io/badge/DSH-Plugin-8b5cf6.svg?style=for-the-badge&labelColor=2e1065" alt="DSH Plugin"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node-20%2B-f59e0b.svg?style=for-the-badge&labelColor=451a03" alt="Node version"></a>
+</p>
+
+<!-- Author Showcase Link -->
+<p align="center">
+  <a href="https://goodandready.app/"><img src="https://img.shields.io/badge/All_Author_Projects-goodandready.app-ff4500.svg?style=for-the-badge&logo=rocket&logoColor=white&labelColor=1a1a2e" alt="GoodAndReady Showcase"></a>
+</p>
+
+<p align="center">
+  <a href="README.md"><b>🇬🇧 English</b></a> •
+  <a href="docs/README.ru.md"><b>🇷🇺 Русский</b></a> •
+  <a href="docs/README.zh.md"><b>🇨🇳 中文说明</b></a>
+</p>
+
+</div>
+
+---
+
+## ⚡ Overview & The Problem
+
+AI development and agentic coding consume large volumes of tokens across prompt generation, reasoning, and context caches. Without continuous financial feedback, developers risk unexpected billing spikes, missing off-peak discount windows, or failing to identify runaway subagent expenses.
+
+**`@goodandready/dsh-cost-meter`** embeds a high-precision cost telemetry chip directly into the DeepSeek Harness conversation header (`conversation.session.header.utilities`):
+
+```text
+● ≈ $0.12  0:17     ← Live session cost chip with tariff countdown
 ```
-● ≈ ₽8.55  0:17     ← чип в conversation.session.header.utilities
+
+Clicking the chip expands an interactive breakdown modal displaying 1M token rate tables across peak and off-peak tiers, active UTC window status, and per-model session expenditure summaries.
+
+---
+
+## 🏛️ Architecture
+
+```mermaid
+graph TD
+    subgraph StreamTelemetry ["DeepSeek Harness Runtime"]
+        Req["LLM Request / Header<br/>(provider, model)"]
+        StreamHook["Incremental Streaming Chunks"]
+        Proj["costByModel Projection<br/>(30-min UTC Slots)"]
+    end
+
+    subgraph PricingCatalog ["Tariff Resolution Engine"]
+        Manual["Manual Config Rates<br/>(settings.yaml: prices)"]
+        DeepSeekTier["DeepSeek Official Tier<br/>(Peak vs Off-Peak 50% discount)"]
+        OpenRouterTier["OpenRouter API Catalog<br/>(Cached Daily)"]
+    end
+
+    subgraph UI ["User Interface Surfaces"]
+        Chip["Header Cost Chip<br/>(Active tariff + countdown)"]
+        Modal["Breakdown Drawer<br/>(Rates per 1M, UTC windows, model table)"]
+        Settings["Settings Card<br/>(Currency, USD rate, timezones)"]
+    end
+
+    Req --> Proj
+    StreamHook --> Proj
+    Proj --> Chip
+    PricingCatalog --> Proj
+    Manual --> PricingCatalog
+    DeepSeekTier --> PricingCatalog
+    OpenRouterTier --> PricingCatalog
+    Chip --> Modal
 ```
 
-По клику раскрывается панель: тарифная таблица за 1M токенов в двух колонках
-(не-пик / пик, активная выделена), окна пика в UTC и итог за сессию с разбивкой по моделям.
+---
 
-## Возможности
+## ✨ Features & Key Capabilities
 
-- **Живой подсчёт расхода**: инкрементальный расчёт токенов и стоимости прямо во время стриминга ответа.
-- **Двухуровневые тарифы**: поддержка официальной сетки DeepSeek (пик / не-пик) и скидочных окон OpenRouter.
-- **Provider-aware маршрутизация**: раздельная тарификация для прямых моделей DeepSeek и хостинга моделей через OpenRouter.
-- **Учёт по получасовым слотам UTC**: исторические траты фиксируются по ставке слота и не пересчитываются задним числом.
-- **Карточка настроек в UI**: нативная карточка в `settings.plugin.item` для настройки валюты, курса USD и таймзоны.
-- **Полная двуязычная локализация**: интерфейс чипа, панели и настроек на русском и английском языках (`ctx.locale`).
+1. **Incremental Streaming Telemetry**: Computes prompt, completion, and cache read/write tokens in real-time without polling or UI stutter.
+2. **Dual-Tier Tariff Engine**: Official DeepSeek peak windows (01:00–04:00 and 06:00–10:00 UTC) with automatic 50% off-peak discount detection.
+3. **UTC Half-Hour Slot Immutability**: Historical session expenditure is permanently anchored to the rate active at the moment of execution.
+4. **Provider-Aware Routing**: Distinguishes direct provider connections from hosted gateways (e.g. OpenRouter vs native endpoints).
+5. **Interactive UI Modal & Settings**: Custom currency symbols (`$`, `€`, `₽`, `¥`), exchange rates, and timezone configurations.
 
-## Откуда берутся цифры
+---
 
-**Токены** — из собственной проекции сессии `costByModel`, которую плагин
-регистрирует тем же механизмом, что и штатный `@deepseek-ai/dsh-token-meter`.
-В журнале есть всё нужное: `request/header` несёт `config: {provider, model}`,
-а usage приходит следом за тем же шагом, поэтому каждая выборка относится к
-модели, которая её заработала.
-
-Накопление идёт не одной кучей, а по **получасовым слотам суток UTC**: расход
-фиксируется по ставке, действовавшей в момент трат, и переключение тарифа не
-пересчитывает уже потраченное. Все реальные окна выровнены по получасу, так что
-слот воспроизводит ставку точно.
-
-Сессионный слот отдаёт компоненту `useProjection`, поэтому значения обновляются
-прямо во время стрима, без опроса.
-
-**Цены** берутся из трёх источников, в таком порядке:
-
-1. **Ручные `prices`** из конфига — для подписок и локальных моделей.
-2. **Provider-aware каталог**:
-   - Если указан провайдер `openrouter`, ставки берутся из каталога OpenRouter (даже для моделей `deepseek/*`).
-   - Для прямых моделей DeepSeek применяется официальная зашитая тарифная сетка: пик 01:00–04:00 и 06:00–10:00 UTC, вне окон — льготная ставка 50%.
-3. **Каталог OpenRouter** (`https://openrouter.ai/api/v1/models`, без ключа) —
-   для всех остальных моделей. Каталог кэшируется на диск в runtime-директории профиля и обновляется раз в сутки.
-
-Если модель не нашлась нигде, виджет пишет «тариф ?», а в разбивке сессии выводит `не указана стоимость`.
-
-## Установка
+## 📦 Installation
 
 ```bash
 dsh plugin --profile web add @goodandready/dsh-cost-meter
 ```
 
-## Настройки
+Restart your DeepSeek Harness instance and refresh the browser.
 
-Плагин регистрирует секцию конфигурации `dsh-cost-meter`:
+---
 
-| Параметр | По умолчанию | Описание |
-|---|---|---|
-| `currency` | `₽` | Символ или код валюты для отображения |
-| `usdRate` | `90` | Множитель пересчёта долларовых цен в валюту отображения |
-| `displayTimeZone` | `UTC` | Таймзона для отображения окон в панели (например, `Europe/Moscow`) |
-| `useOpenRouter` | `true` | Загружать ли каталог цен OpenRouter для сторонних моделей |
-| `prices` | `{}` | Ручные ставки за 1M токенов `{ prompt, completion, cacheRead?, cacheWrite? }` |
-| `modelMap` | `{}` | Алиасы моделей `{ "alias": "target-model" }` |
+## ⚙️ Configuration Reference (`settings.yaml`)
 
-## Тестирование
+```yaml
+dsh-cost-meter:
+  currency: "$"
+  usdRate: 1.0
+  displayTimeZone: "UTC"
+  useOpenRouter: true
+  prices: {}
+  modelMap: {}
+```
+
+### Configuration Parameters
+
+| Parameter | Type | Default | Description |
+|:---|:---|:---|:---|
+| `currency` | `string` | `"$"` | Display currency symbol or code |
+| `usdRate` | `number` | `1.0` | Exchange rate multiplier from USD |
+| `displayTimeZone` | `string` | `"UTC"` | Timezone for window schedule formatting (e.g. `Europe/London`, `Asia/Shanghai`) |
+| `useOpenRouter` | `boolean` | `true` | Fetch OpenRouter public catalog for fallback models |
+| `prices` | `object` | `{}` | Custom override rates per 1M tokens `{ prompt, completion, cacheRead?, cacheWrite? }` |
+| `modelMap` | `object` | `{}` | Model alias mappings `{ "alias": "target-model" }` |
+
+---
+
+## 🧪 Testing
+
+Run the automated test suite:
 
 ```bash
 npm test
 ```
 
-Включает проверку контрактных инвариантов публичного пакета и регрессионные тесты проекции и тарификации (`test/projection-lifecycle.test.mjs`).
+---
 
-## Лицензия
+## 📄 License
 
-MIT
+MIT © [GooDAnDReaDY](https://github.com/GooDAnDReaDY)
