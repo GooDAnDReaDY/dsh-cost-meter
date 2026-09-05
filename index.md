@@ -4,7 +4,8 @@
 окнам. Host half регистрирует projection и route состояния; browser half
 рисует chip и детализацию в conversation header.
 
-Каноническая поставка: `@goodandready-private/dsh-cost-meter`.
-
+Каноническая поставка: `@goodandready/dsh-cost-meter` (публичный npm).
 - [README](README.md)
-- [Проверка приватного маршрута](docs/testing/private-route.md)
+- [Дизайн-контракт](docs/design/DESIGN.md)
+- [Проверка публичного маршрута](docs/testing/public-route.md)
+- [Публичный релиз](docs/deployment/public-release.md)

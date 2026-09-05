@@ -58,7 +58,7 @@
 ## Установка из приватного registry
 
 ```bash
-dsh plugin --profile web add @goodandready-private/dsh-cost-meter
+dsh plugin --profile web add @goodandready/dsh-cost-meter
 sudo systemctl restart dsh-web
 ```
 

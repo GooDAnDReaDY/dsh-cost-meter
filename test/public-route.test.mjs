@@ -7,18 +7,25 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'))
 const patch = await readFile(new URL('../cordis.patch.yml', import.meta.url), 'utf8')
 const client = await readFile(new URL('../lib/client.js', import.meta.url), 'utf8')
-const sourceFiles = ['README.md', 'AGENTS.md', 'index.md', 'docs/testing/private-route.md', 'docs/deployment/private-release.md']
+const sourceFiles = [
+  'README.md',
+  'AGENTS.md',
+  'index.md',
+  'docs/design/DESIGN.md',
+  'docs/testing/public-route.md',
+  'docs/deployment/public-release.md',
+]
 
-test('private package identity is aligned across package, patch, and browser loader', () => {
-  const name = '@goodandready-private/dsh-cost-meter'
+test('public package identity is aligned across package, patch, and browser loader', () => {
+  const name = '@goodandready/dsh-cost-meter'
   assert.equal(pkg.name, name)
   assert.match(patch, new RegExp(`name: ['"]${name.replace('/', '\\/')}['"]`))
   assert.match(client, new RegExp(`id: ['"]${name.replace('/', '\\/')}['"]`))
-  assert.equal(pkg.publishConfig.registry, 'https://npm.pkg.github.com')
+  assert.equal(pkg.publishConfig.access, 'public')
 })
 
 test('published docs do not prescribe local installs or machine-specific paths', async () => {
-  const forbidden = [/file:/i, /link:/i, /(?:\/home\/|\/mnt\/|[A-Z]:\\)/, /192\.168\./, /codex_[^\s/]+/i]
+  const forbidden = [/file:/i, /link:/i, /(?:\/home\/|\/mnt\/|[A-Z]:\\)/, /192\.168\./, /codex_[^\s/]+/i, /goodandready-private/i]
   for (const relative of sourceFiles) {
     const text = await readFile(new URL(`../${relative}`, import.meta.url), 'utf8')
     for (const pattern of forbidden) assert.doesNotMatch(text, pattern, relative)
@@ -32,11 +39,12 @@ test('published docs do not prescribe local installs or machine-specific paths',
   )
 })
 
-test('tarball metadata keeps only the private package name', () => {
+test('tarball metadata keeps only the public package name', () => {
   assert.equal(pkg.files.includes('lib'), true)
   assert.equal(pkg.files.includes('cordis.patch.yml'), true)
   assert.equal(pkg.files.includes('docs'), true)
-  assert.equal(pkg.name.startsWith('@goodandready-private/'), true)
+  assert.equal(pkg.name.startsWith('@goodandready/'), true)
+  assert.equal(pkg.name.includes('-private'), false)
 })
 
 test('tariff helpers preserve route matching and UTC window parsing', async () => {
