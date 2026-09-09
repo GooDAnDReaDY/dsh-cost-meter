@@ -1,25 +1,24 @@
-# Task Plan: Refactor dsh-cost-meter for stability, simplification & performance
+# Task Plan: Stability, Race Condition Prevention & TimeZone Validation (v0.7.8)
 
-- **Issue**: Gitea #17
-- **Worktree**: `.worktrees/refactor-stability`
-- **Branch**: `refactor/stability-and-quality`
+## 1. Goal
+Strengthen `@goodandready/dsh-cost-meter` runtime resilience:
+- Prevent race condition response overwrites in browser `CostMeter` component.
+- Validate IANA TimeZone inputs in `CostMeterCard` settings before saving.
+- Sanitize `models` query parameter keys in `lib/index.js` route handler.
+- Maintain strict backward compatibility, zero regression in automated tests.
 
-## Phases
-
-- [ ] **Phase 1: Architecture & Overengineering Cleanup**
-  - Remove `zod` dependency from `lib/index.js`, standardize on `@deepseek-ai/schemastery`.
-  - Remove dynamic fragile `require('@deepseek-ai/dsh-client-ui-primitives')` from `lib/client.js`, standardize on clean native inline SVG chevron.
-  - Remove race-prone `setTimeout(..., 500)` fallback slot registration in `lib/client.js`.
-- [ ] **Phase 2: Fault Tolerance & Safe Caching**
-  - Wrap catalog filesystem operations (`mkdirSync`, `writeFileSync`, `readFileSync`) in safe `try/catch`.
-  - Add safe error catching in `lib/client.js` for `/dsh-cost-meter/state` fetch to prevent console error spam on DSH reload.
-- [ ] **Phase 3: Performance & Settings Reactivity**
-  - Implement in-memory catalog index Map in `lib/index.js` for O(1) model rate lookups.
-  - Subscribe to `settingsScope` updates in `lib/client.js` to dynamically refresh currency and USD rate without reload.
-- [ ] **Phase 4: Verification, Tests & Documentation**
-  - Run regression test suite `npm test` and add tests for schema validation and safe catalog failure.
-  - Update `docs/design/DESIGN.md` and release notes for v0.7.7.
-- [ ] **Phase 5: Release Gate & Production Rollout**
-  - Test on MiniPC test server (`192.168.1.123:3082`).
-  - Merge PR, tag v0.7.7, publish to npm & GitHub release.
-  - Deploy to production web profile on MiniAI (`192.168.1.111:3080`).
+## 2. Checklist
+- [ ] Bump version to `0.7.8` in `package.json`
+- [ ] Implement cancellation flag / abort protection in `lib/client.js` `CostMeter`
+- [ ] Implement `isValidTimeZone` helper and validation check in `CostMeterCard`
+- [ ] Implement key sanitization (length <= 128 chars, alphanumeric/dash/slash) in `lib/index.js`
+- [ ] Add unit tests for timezone check and query sanitization
+- [ ] Run test suite (`npm test`)
+- [ ] Update `docs/design/DESIGN.md`
+- [ ] Conventional Commit & Push
+- [ ] Gitea PR & Merge to `main`
+- [ ] Test on MiniPC test server (`192.168.1.123`)
+- [ ] Production Smoke Verification on MiniAI (`192.168.1.111`)
+- [ ] Publish Tag `v0.7.8`, GitHub Release & npm
+- [ ] Update production profile from npm
+- [ ] Close Gitea Issue #19 and clean up worktree

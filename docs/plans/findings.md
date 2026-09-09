@@ -1,16 +1,10 @@
-# Technical Findings & Architecture Decisions (v0.7.7)
+# Findings & Architecture Decisions (v0.7.8)
 
-## 1. Zod Usage Rationale
-- `zod` is used in `lib/index.js` for `usageByModelProjection`:
-  DeepSeek Harness core projection machinery requires `.parse(view)` method on projection schemas for runtime boundary contract validation. Schemastery does not provide `.parse()`, so `zod` is strictly required here and is not overengineering.
+## 1. Browser Request Race Conditions
+In `CostMeter`, rapid model switches or toggling the popover calls `load(usedKeys)`. Since network latency varies, an older request might resolve after a newer one. By tracking an active request counter or cancellation token per effect invocation, we ensure only the most up-to-date state response mutates the component state.
 
-## 2. Browser Reactivity & Settings
-- Reactivity in browser UI (`lib/client.js`):
-  Using `React.useSyncExternalStore` connected to `ctx.settingsScope` allows instant updates of `currency` and `usdRate` in the header chip and popover without needing a page refresh or roundtrip state reload.
+## 2. IANA TimeZone Validation
+`Intl.DateTimeFormat(undefined, { timeZone })` throws a `RangeError` if the timezone string is invalid. We can safely leverage this in `CostMeterCard` to reject typos (e.g. `Europe/Moskow` instead of `Europe/Moscow`) on the client before writing to `settingsScope`.
 
-## 3. Slot Hygiene
-- Cleaned up slot injection in `lib/client.js`:
-  Removed `setTimeout(..., 500)` fallback registering `settings.section`. The standard `settings.plugin.item` slot cleanly renders the settings card inside the Harness Settings view.
-
-## 4. Style Isolation & Deduplication
-- Added `data-dsh-plugin="dsh-cost-meter"` attribute to injected `<style>` tags to adhere to DSH UI design guidelines and prevent duplicate stylesheets.
+## 3. Query Parameter Sanitization
+The endpoint `GET /dsh-cost-meter/state?models=...` accepts comma-separated model keys. Adding a length bound (e.g. <= 128 chars) and trimming ensures no malformed payloads cause unexpected overhead.
