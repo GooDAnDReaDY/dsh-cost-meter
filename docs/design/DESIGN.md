@@ -22,7 +22,11 @@
 - Документация:
   - README.md, index.md, docs/testing/public-route.md, docs/testing/projection-lifecycle.md, docs/deployment/public-release.md.
 
-## Visual Direction
+## Visual Direction (Unified with dsh-clinebot)
+- Атмосфера: Строгий утилитарный нативный интерфейс DSH, высокая информационная плотность без визуального шума.
+- Утверждённые референсы: Эталонный плагин `@goodandready/dsh-clinebot`, дизайн-система DeepSeek Harness (`--dsw-alias-*`), карточки секций `.dcm-section-card`, бейджи статуса `.dcm-badge`, адаптивная сетка параметров `.dcm-grid-2`, чипы в шапке сессии.
+- Отказоустойчивость: Обязательный `ErrorBoundary` вокруг карточки настроек и поповера шапки (предотвращает исчезновение слотов ядра при исключениях рендеринга).
+- Синхронизация зеркал: `refreshMirrorUntilVisible(ctx)` для надёжного доступа к зеркалу `settingsScope`.
 - Атмосфера: Строгий утилитарный нативный интерфейс DSH, высокая информационная плотность без визуального шума.
 - Утверждённые референсы: Дизайн-система DeepSeek Harness (`--dsw-alias-*`), чипы в шапке сессии (`dsh-key-rotation`, `dsh-context-lens`), стандарт карточек настроек DSH.
 - Не копировать: Избыточные градиенты, внешние модальные окна, тяжелые тени, кастомные несогласованные шрифты.
@@ -41,7 +45,7 @@
 - Сетка и отступы:
   - Чип: высота 22px, padding: 0 8px, gap: 6px, border-radius: 6px.
   - Панель: padding: 12px 14px, border-radius: 10px, ширина 320px.
-  - Карточка настроек: нативный складной контейнер (`.dcm-settings-card`), отступы полей, бейдж статуса снимка (`ready`, `loading`, `unavailable`).
+  - Карточка настроек: нативный складной контейнер (`.dcm-card`) с шапкой, статусами-бейджами (`dcm-badge-ok`, `dcm-badge-warn`, `dcm-badge-bad`), 3 структурированными секциями (`Основные параметры`, `Каталог OpenRouter`, `Диагностика и статус`), защитой ввода и кнопкой сохранения (`dcm-btn-primary`).
 
 ## Components & States
 - Чип:
