@@ -1,17 +1,25 @@
-# Progress Log (Issue #21 / v0.7.9)
+<!-- id: issue-23-progress -->
+# Progress: Issue #23 — Стабилизация кода и редизайн UI по стандарту dsh-clinebot
 
-- [x] Analyze Issue #21
-- [x] Create worktree `.worktrees/issue-21`
-- [x] Initialize plans (`task_plan.md`, `findings.md`, `progress.md`)
-- [x] Bump version to 0.7.9 in `package.json`
-- [x] Implement settings card additions (`useOpenRouter`, `refreshHours`) in `lib/client.js`
-- [x] Safe service resolution with `ctx.get('...')` in `lib/client.js`
-- [x] Update documentation with full 10-field matrix (`README.md`, `docs/README.ru.md`, `docs/design/DESIGN.md`)
-- [x] Add regression test `test/settings-card-fields.test.mjs` (12/12 passing)
-- [ ] Commit changes with conventional commits (`git-antigravity`)
-- [ ] Create Pull Request and merge into `main`
-- [ ] Test package on MiniPC isolated test server (`192.168.1.123:3082`)
-- [ ] Smoke-test package on production candidate (`192.168.1.111:3080`)
-- [ ] Publish v0.7.9 to npm and GitHub Release
-- [ ] Install v0.7.9 from npm on MiniAI and verify live health
-- [ ] Close Gitea Issue #21 and clean up worktree
+- [x] Создана Issue #23 в Gitea
+- [x] Создан worktree `.worktrees/issue-23` на ветке `feat/stability-and-ui-clinebot`
+- [x] Инициализированы файлы планирования (`task_plan.md`, `findings.md`, `progress.md`)
+- [x] Применены серверные исправления (`lib/index.js`):
+  - [x] Инициализация `byLowerId` в начальном состоянии `catalog.index` (устранён крах холодного старта)
+  - [x] Защита `slotOf(timeMs)` от `NaN` при невалидных временных метках
+  - [x] Добавлен таймаут (15с) для внешних запросов к OpenRouter
+  - [x] Расширен `splitRoute` для поддержки моделей без слэша (`deepseek-chat`)
+  - [x] Экспорт `catalogModelsCount` в ответе `/dsh-cost-meter/state`
+- [x] Применён визуальный редизайн по стандарту `dsh-clinebot` (`lib/client.js`):
+  - [x] Внедрён `createErrorBoundary()` для защиты слотов от падений
+  - [x] Внедрён `refreshMirrorUntilVisible(ctx)` для синхронизации настроек
+  - [x] Внедрена нативная CSS-система дизайн-токенов (`--dsw-alias-*`)
+  - [x] Шапка карточки снабжена бейджами статуса каталога, тарифа и таймзоны
+  - [x] Настройки структурированы по 3 секциям (`Основные параметры`, `Каталог OpenRouter`, `Диагностика`)
+  - [x] Модернизирован поповер шапки сессии
+- [x] Обновлена документация (`DESIGN.md`, `README.md`, `docs/README.ru.md`)
+- [x] Поднята версия до `0.7.10` в `package.json`
+- [x] Написаны и успешно пройдены 16 тестов в `test/stability-and-visual.test.mjs` (`npm test` 16/16 pass)
+- [ ] Оформление коммита, push ветки и создание PR #24
+- [ ] Merge PR в `main` и сборка тарбола
+- [ ] Тестирование на проде, публикация релиза v0.7.10 и закрытие Issue #23
