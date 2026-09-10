@@ -1,10 +1,22 @@
-# Findings & Architecture Decisions (v0.7.8)
+# Technical Findings (Issue #21)
 
-## 1. Browser Request Race Conditions
-In `CostMeter`, rapid model switches or toggling the popover calls `load(usedKeys)`. Since network latency varies, an older request might resolve after a newer one. By tracking an active request counter or cancellation token per effect invocation, we ensure only the most up-to-date state response mutates the component state.
+## 1. Config Fields Breakdown
+The plugin `Config` defines 10 fields:
+1. `currency` (string, default '$') -> Present in UI
+2. `usdRate` (number, default 1) -> Present in UI
+3. `displayTimeZone` (string, default 'Europe/Moscow') -> Present in UI
+4. `useOpenRouter` (boolean, default true) -> Missing in UI -> To be added as a checkbox in `CostMeterCard`
+5. `refreshHours` (number, default 24) -> Missing in UI -> To be added as a numeric input in `CostMeterCard`
+6. `modelMap` (dict of string -> string) -> Advanced JSON/YAML route mapping
+7. `prices` (dict of PriceRow) -> Advanced manual pricing rules
+8. `deepseekPeakPrices` (dict of PriceRow) -> Advanced DeepSeek peak overrides
+9. `manualPeakWindowsUtc` (array of string) -> Advanced manual time windows
+10. `manualOffPeakMultiplier` (number) -> Advanced discount multiplier for manual rates
 
-## 2. IANA TimeZone Validation
-`Intl.DateTimeFormat(undefined, { timeZone })` throws a `RangeError` if the timezone string is invalid. We can safely leverage this in `CostMeterCard` to reject typos (e.g. `Europe/Moskow` instead of `Europe/Moscow`) on the client before writing to `settingsScope`.
+By adding `useOpenRouter` and `refreshHours` to `CostMeterCard`, all 5 primary scalar/control settings are directly configurable in the DSH Settings GUI. The 5 advanced structured override rules (`prices`, `modelMap`, `deepseekPeakPrices`, `manualPeakWindowsUtc`, `manualOffPeakMultiplier`) are explicitly documented in README.md and DESIGN.md as YAML configuration rows.
 
-## 3. Query Parameter Sanitization
-The endpoint `GET /dsh-cost-meter/state?models=...` accepts comma-separated model keys. Adding a length bound (e.g. <= 128 chars) and trimming ensures no malformed payloads cause unexpected overhead.
+## 2. Service Access Pattern
+In `lib/index.js`, we have:
+`const settings = ctx.get('settings')` (canonical).
+In `lib/client.js`, `ctx.settingsScope` is accessed directly. We should safely check `(ctx.get && ctx.get('settingsScope')) || ctx.settingsScope || (ctx.services && ctx.services.settingsScope)`.
+Same for `ctx.locale` and `ctx.slots`.

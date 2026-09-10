@@ -108,14 +108,20 @@ dsh-cost-meter:
 
 ### Configuration Parameters
 
-| Parameter | Type | Default | Description |
-|:---|:---|:---|:---|
-| `currency` | `string` | `"$"` | Display currency symbol or code |
-| `usdRate` | `number` | `1.0` | Exchange rate multiplier from USD |
-| `displayTimeZone` | `string` | `"UTC"` | Timezone for window schedule formatting (e.g. `Europe/London`, `Asia/Shanghai`) |
-| `useOpenRouter` | `boolean` | `true` | Fetch OpenRouter public catalog for fallback models |
-| `prices` | `object` | `{}` | Custom override rates per 1M tokens `{ prompt, completion, cacheRead?, cacheWrite? }` |
-| `modelMap` | `object` | `{}` | Model alias mappings `{ "alias": "target-model" }` |
+| Parameter | Scope / Location | Type | Default | Description |
+|:---|:---|:---|:---|:---|
+| `currency` | GUI / `settings.yaml` | `string` | `"$"` | Display currency symbol (e.g. `$`, `₽`, `€`) |
+| `usdRate` | GUI / `settings.yaml` | `number` | `1.0` | Exchange rate multiplier: units of currency per 1 USD |
+| `displayTimeZone` | GUI / `settings.yaml` | `string` | `"Europe/Moscow"` | IANA timezone for peak/off-peak windows formatting |
+| `useOpenRouter` | GUI / `settings.yaml` | `boolean` | `true` | Automatically fetch rates & discount windows from OpenRouter |
+| `refreshHours` | GUI / `settings.yaml` | `number` | `24` | Hours between periodic OpenRouter catalog updates |
+| `deepseekPeakPrices` | `settings.yaml` only | `object` | `{}` | Override built-in DeepSeek peak rates by model id |
+| `prices` | `settings.yaml` only | `object` | `{}` | Manual rates per 1M tokens `{ input, output, cacheHit?, cacheWrite? }` |
+| `modelMap` | `settings.yaml` only | `object` | `{}` | Route override: `"provider/model"` -> OpenRouter model id |
+| `manualPeakWindowsUtc` | `settings.yaml` only | `array` | `[]` | Manual peak windows HH:MM-HH:MM UTC used with manual prices |
+| `manualOffPeakMultiplier` | `settings.yaml` only | `number` | `1.0` | Multiplier applied outside manual peak windows |
+
+> **Note on GUI vs YAML**: Primary scalar parameters (`currency`, `usdRate`, `displayTimeZone`, `useOpenRouter`, `refreshHours`) are directly editable in the GUI Settings Card under **Settings → Plugins → Plugin Settings → Cost Meter**. Advanced structured rules (`prices`, `modelMap`, `deepseekPeakPrices`, `manualPeakWindowsUtc`, `manualOffPeakMultiplier`) are configured in `settings.yaml` due to their complex dictionary/array schema.
 
 ---
 

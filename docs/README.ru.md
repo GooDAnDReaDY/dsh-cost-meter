@@ -108,14 +108,20 @@ dsh-cost-meter:
 
 ### Параметры конфигурации
 
-| Параметр | Тип | По умолчанию | Описание |
-|:---|:---|:---|:---|
-| `currency` | `string` | `"₽"` | Символ или код валюты для отображения |
-| `usdRate` | `number` | `90.0` | Множитель пересчёта долларовых цен в валюту отображения |
-| `displayTimeZone` | `string` | `"UTC"` | Таймзона для отображения окон в панели |
-| `useOpenRouter` | `boolean` | `true` | Загружать ли каталог цен OpenRouter для сторонних моделей |
-| `prices` | `object` | `{}` | Ручные ставки за 1M токенов `{ prompt, completion, cacheRead?, cacheWrite? }` |
-| `modelMap` | `object` | `{}` | Алиасы моделей `{ "alias": "target-model" }` |
+| Параметр | Доступность | Тип | По умолчанию | Описание |
+|:---|:---|:---|:---|:---|
+| `currency` | GUI / `settings.yaml` | `string` | `"₽"` | Символ валюты в интерфейсе (например, `₽`, `$`, `€`) |
+| `usdRate` | GUI / `settings.yaml` | `number` | `80.0` | Курс обмена: единиц валюты за 1 USD |
+| `displayTimeZone` | GUI / `settings.yaml` | `string` | `"Europe/Moscow"` | IANA часовой пояс для отображения окон пика и не-пика |
+| `useOpenRouter` | GUI / `settings.yaml` | `boolean` | `true` | Загружать ли каталог тарифов и скидочных окон OpenRouter |
+| `refreshHours` | GUI / `settings.yaml` | `number` | `24` | Частота обновления каталога OpenRouter (в часах) |
+| `deepseekPeakPrices` | Только `settings.yaml` | `object` | `{}` | Переопределение встроенных пиковых ставок DeepSeek по id модели |
+| `prices` | Только `settings.yaml` | `object` | `{}` | Ручные ставки за 1M токенов `{ input, output, cacheHit?, cacheWrite? }` |
+| `modelMap` | Только `settings.yaml` | `object` | `{}` | Сопоставление маршрута `"provider/model"` на id в OpenRouter |
+| `manualPeakWindowsUtc` | Только `settings.yaml` | `array` | `[]` | Ручные окна пика HH:MM-HH:MM UTC для ручных ставок |
+| `manualOffPeakMultiplier` | Только `settings.yaml` | `number` | `1.0` | Коэффициент тарифа вне ручных окон пика |
+
+> **Интерфейс настроек (GUI) vs settings.yaml**: Основные параметры (`currency`, `usdRate`, `displayTimeZone`, `useOpenRouter`, `refreshHours`) настраиваются прямо в карточке интерфейса DSH (**Настройки → Плагины → Настройки плагинов → Cost Meter**). Расширенные структурированные правила сопоставления и ручных тарифов задаются через `settings.yaml` из-за сложной древовидной структуры.
 
 ---
 
