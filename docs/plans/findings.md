@@ -1,13 +1,17 @@
-# Findings: Issue #23
+# Findings: Issue #25 (v0.8.1)
 
-## Архитектурные паттерны dsh-clinebot
-- Изолированный тег `<style id="dsh-cost-meter-unified-css" data-dsh-plugin="dsh-cost-meter">` с переменными `--dsw-alias-...`.
-- `createErrorBoundary()` защищает слоты от падений при сбоях рендеринга.
-- `refreshMirrorUntilVisible(ctx)` обеспечивает доступность зеркала настроек в `settingsScope`.
-- Бейджи статуса (`cb-badge-ok`, `cb-badge-warn`, `cb-badge-bad`) позволяют пользователю моментально оценить состояние плагина.
+## 1. Клиентские вычисления расписания
+- В `lib/client.js`: `extremes()` и `minutesUntilChange()` вызывались на каждом тике таймера (15 сек) и перерисовывали 1440-минутный цикл:
+  `for (let minute = 0; minute < 1440; minute++)` с поиском в `windows`.
+- В сутках конечное число окон $K$ (обычно 2–4). Смена тарифа может происходить только на границах интервалов: `window.start` и `window.end`.
+- Замена на $O(K)$ даёт мгновенный расчёт без аллокации сотен объектов в секунду при активных сессиях.
 
-## Найденные баги в dsh-cost-meter
-1. Строка 427 `lib/index.js`: `catalog = { index: { byId: {}, bySuffix: {} }, fetchedAt: 0, error: null }` не содержала `byLowerId`. При обращении к `matchModel` до первой загрузки каталога вызывался `index.byLowerId[lower]`, что приводило к `TypeError`.
-2. `slotOf(event.time)`: при `undefined` возвращал `NaN`, повреждая ключи слотов в проекции.
-3. `fetch(CATALOG_URL)`: без таймаута мог блокировать цикл обновлений при сетевых лагах.
-4. `splitRoute`: отбрасывал модели без слэша.
+## 2. Разрешение тарифов на сервере
+- `resolveTariff(cfg, catalog.index, route)` перебирает регулярные выражения и суффиксы.
+- Кэширование в `Map<string, ResolvedTariff>` с очисткой при обновлении каталога полностью снимает нагрузку на CPU при частом пуллинге `/state` клиентами DSH.
+
+## 3. Поддержка ETag
+- Для `/dsh-cost-meter/state` генерация слабого ETag (`W/"<hash>"`) на основе `updatedAt`, `fetchedAt` и счетчиков токенов позволяет клиентам передавать `If-None-Match` и получать `304 Not Modified`, экономя полосу пропускания и парсинг JSON.
+
+## 4. Алиасы вендоров
+- Разные провайдеры в DSH могут передавать вендоров как `z-ai`, `zai`, `google`, `gemini`, `deepseek-ai`, `deepseek`. Единая нормализация исключит ситуации fallback на generic тариф.

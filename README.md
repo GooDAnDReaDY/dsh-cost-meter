@@ -138,3 +138,10 @@ npm test
 ## 📄 License
 
 MIT © [GooDAnDReaDY](https://github.com/GooDAnDReaDY)
+
+### Performance & Smart Cost Features (v0.8.1)
+- **O(K) Rate Change Calculation**: Next schedule transition is resolved in $O(K)$ boundary hops instead of full-day iterations.
+- **Server Cache & ETag**: High-throughput state polling with `304 Not Modified` support and internal tariff LRU cache.
+- **Manual Catalog Sync**: On-demand catalog fetch via `POST /dsh-cost-meter/refresh` or UI "Sync Now" button.
+- **Savings Advice & Budget Threshold**: Popover hints on impending off-peak discounts (50% off) and optional warning thresholds (`budgetThreshold`).
+- **Quick Summary Export**: Instant markdown/text summary copy to clipboard.
