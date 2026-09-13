@@ -155,3 +155,9 @@ MIT © [GooDAnDReaDY](https://github.com/GooDAnDReaDY)
 - **Manual Catalog Sync**: On-demand catalog fetch via `POST /dsh-cost-meter/refresh` or UI "Sync Now" button.
 - **Savings Advice & Budget Threshold**: Popover hints on impending off-peak discounts (50% off) and optional warning thresholds (`budgetThreshold`).
 - **Quick Summary Export**: Instant markdown/text summary copy to clipboard.
+
+### UI Refinements & Language Standards (v0.8.2)
+- **Native Dot Status Indicator**: Header chip uses a refined status dot (green for off-peak, amber for peak, pulsing red for budget overrun, neutral for flat/idle) rather than full-fill backgrounds.
+- **Context Cache Savings**: Automatically calculates and highlights financial savings gained from prompt caching (e.g. `Cache saved: ≈ $0.14 (-68%)`).
+- **Multi-Model Accordion**: Clean collapsible list when 3 or more models are used in a single session.
+- **DSH Locale Standards**: Full English (`en`) and Chinese (`zh`) locale dictionaries registered directly in the client bundle. Russian translations are provided externally via `@goodandready/dsh-russian-lang`.
