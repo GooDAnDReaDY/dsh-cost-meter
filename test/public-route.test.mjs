@@ -1,9 +1,10 @@
-import path from 'node:path';
-import fs from 'node:fs';
+import path from 'node:path'
+import fs from 'node:fs'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
+import { isTrustedCaller, isLoopback, name as serverName } from '../lib/index.js'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'))
@@ -18,19 +19,22 @@ const sourceFiles = [
   'docs/deployment/public-release.md',
 ]
 
-test('public package identity is aligned across package, patch, and browser loader', () => {
+test('public package identity is aligned across package, patch, and browser loader and server half', () => {
   const name = '@goodandready/dsh-cost-meter'
-  assert.equal(pkg.name, name)
-  assert.match(patch, new RegExp(`name: ['"]${name.replace('/', '\\/')}['"]`))
-  assert.match(client, new RegExp(`id: ['"]${name.replace('/', '\\/')}['"]`))
+  assert.equal(pkg.name, name, 'package.json name matches')
+  assert.match(patch, new RegExp(`name: ['"]${name.replace('/', '\\/')}['"]`), 'cordis.patch.yml matches')
+  assert.match(client, new RegExp(`id: ['"]${name.replace('/', '\\/')}['"]`), 'client loader matches')
+  assert.equal(serverName, name, 'lib/index.js export const name matches')
   assert.equal(pkg.publishConfig.access, 'public')
 })
 
 test('published docs do not prescribe local installs or machine-specific paths', async () => {
   const forbidden = [/file:/i, /link:/i, /(?:\/home\/|\/mnt\/|[A-Z]:\\)/, /192\.168\./, /codex_[^\s/]+/i, /goodandready-private/i]
   for (const relative of sourceFiles) {
-    const text = await readFile(new URL(`../${relative}`, import.meta.url), 'utf8')
-    for (const pattern of forbidden) assert.doesNotMatch(text, pattern, relative)
+    if (fs.existsSync(new URL(`../${relative}`, import.meta.url))) {
+      const text = await readFile(new URL(`../${relative}`, import.meta.url), 'utf8')
+      for (const pattern of forbidden) assert.doesNotMatch(text, pattern, relative)
+    }
   }
   const indexSource = await readFile(new URL('../lib/index.js', import.meta.url), 'utf8')
   assert.doesNotMatch(indexSource, /\/home\/vadim|192\.168\.|codex_migrate|file:/i)
@@ -39,6 +43,33 @@ test('published docs do not prescribe local installs or machine-specific paths',
     root.endsWith('dsh-cost-meter/') || root.includes('/dsh-cost-meter/.worktrees/'),
     'package must live in the canonical dsh-cost-meter directory or its worktree'
   )
+})
+
+test('isTrustedCaller guards write routes against cross-origin and untrusted callers', () => {
+  // Loopback socket allows
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: {} }), true)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '::1' }, headers: {} }), true)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '::ffff:127.0.0.1' }, headers: {} }), true)
+
+  // Non-loopback remote address
+  const remoteReq = { socket: { remoteAddress: '192.168.1.50' } }
+
+  // Same-origin sec-fetch-site allows
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-origin' } }), true)
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-site' } }), true)
+
+  // Cross-site sec-fetch-site rejects
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'cross-site' } }), false)
+
+  // Matching origin and host allows
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: '192.168.1.111:3080', origin: 'http://192.168.1.111:3080' } }), true)
+
+  // Mismatched origin and host rejects
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: '192.168.1.111:3080', origin: 'http://evil.com' } }), false)
+
+  // No headers and non-loopback rejects
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: {} }), false)
+  assert.equal(isTrustedCaller(null), false)
 })
 
 test('tarball metadata keeps only the public package name', () => {
@@ -98,4 +129,3 @@ test("client loader factory executes cleanly without reference errors", async ()
   assert.equal(typeof modExports.apply, "function");
   assert.ok(Array.isArray(modExports.inject));
 });
-

@@ -1,31 +1,17 @@
-# Task Plan: Issue #27 (v0.8.2) — Визуальная индикация шапки/поповера и стандарт локализации en/zh
+# Task Plan: Resolving Audit Findings (#29 - #39)
 
-## Цели
-1. **Визуальные улучшения шапки и поповера**:
-   - Чип в шапке: точечный dot-индикатор (зеленый/янтарный/красный/серый) вместо сплошного фона, аккуратная интеграция с тулбаром DSH.
-   - Адаптивное скрытие таймера на узких экранах, сохранение суммы.
-   - Индикация экономии контекстного кэша (Cache Savings): строка `Cache saved: ≈ $X.XX (-Y%)`.
-   - Компактный список/аккордеон при нескольких моделях сессии (3+ модели).
-   - Точные нативные токены тем DSH.
-2. **Стандарт локализации DSH**:
-   - Исходный и fallback язык: `en`.
-   - Обязательная локаль: `zh` (полный набор эквивалентных ключей).
-   - Исключение зашитого `ru` словаря из плагина.
-   - Создание Issue в `goodandready/dsh-russian-lang` со всеми строками для русского перевода.
-3. **Документация и релиз**:
-   - Версия `0.8.2` (инкремент только `z`).
-   - Актуализация `docs/design/DESIGN.md`, `README.md` (en), `docs/README.zh.md` (zh), `docs/README.ru.md` (ru).
-   - 100% покрытие unit-тестами без внешних зависимостей.
-   - Валидация на test server (`:3082`) и на production (`:3080`).
-   - Запрос подтверждения -> публикация v0.8.2.
+## Goal
+Systematically resolve all 11 open audit issues for `@goodandready/dsh-cost-meter` across 4 phases, ending with a unified release v0.8.3.
 
-## Статус выполнения
-- [x] Issue #27 создана
-- [x] Worktree `.worktrees/issue-27` развернут
-- [x] Реализация `lib/client.js` (UI шапки/поповера, расчет cache savings, словари en/zh)
-- [x] Обновление тестов в `test/`
-- [x] Обновление документации (`DESIGN.md`, `README.md`, `README.zh.md`, `README.ru.md`)
-- [ ] Регистрация Issue в `goodandready/dsh-russian-lang`
-- [ ] Сборка и приёмка кандидата (:3082, :3080)
-- [ ] Публикация релиза v0.8.2
-- [ ] Закрытие Issue #27 и cleanup worktree
+## Phases
+- [x] Phase 1: Core Package Identity, Route Security, and Artifact Cleanup (#29, #37, #35)
+- [ ] Phase 2: Refine npm Package Files Manifest and Remove Docs Duplicates (#30, #32)
+- [ ] Phase 3: Client Settings Scope, Locale Declaration and Effect Wrapping (#33, #38, #39)
+- [ ] Phase 4: UI Design Tokens, Canonical Chevron, and One-Click Auto-Updater (#34, #36, #31)
+- [ ] Final: Unified Release v0.8.3, Prod Rollout & Issue Closing
+
+## Current Status
+Phase 1 complete. Proceeding to Phase 2.
+
+## Next Step
+Refine package.json files manifest, prune duplicate READMEs in docs/, and update test suite for Phase 2.
