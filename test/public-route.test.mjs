@@ -131,3 +131,82 @@ test("client loader factory executes cleanly without reference errors", async ()
   assert.equal(typeof modExports.apply, "function");
   assert.ok(Array.isArray(modExports.inject));
 });
+
+test("client apply handles ctx.effect, locale undo, and multiple apply cleanly without lanSettings", async () => {
+  const clientPath = path.join(root, "lib", "client.js");
+  const code = fs.readFileSync(clientPath, "utf8");
+
+  let loadedDef = null;
+  const mockWindow = {
+    __ModuleLoader__: {
+      load: (def) => {
+        loadedDef = def;
+      }
+    }
+  };
+
+  const fn = new Function("window", "require", "module", "exports", code);
+  const fakeRequire = (name) => {
+    if (name === "react") {
+      return {
+        createElement: () => ({}),
+        useEffect: () => {},
+        useState: (init) => [init, () => {}],
+        useCallback: (fn) => fn,
+        useMemo: (fn) => fn()
+      };
+    }
+    return {};
+  };
+
+  fn(mockWindow, fakeRequire, { exports: {} }, {});
+  const modExports = loadedDef.factory(fakeRequire);
+
+  // Assert package.json client inject contains locale
+  assert.deepEqual(pkg.dsh.client.inject, ["@deepseek-ai/dsh-client-locale"]);
+
+  // Verify code does not contain any reference to lanSettings
+  assert.doesNotMatch(code, /lanSettings/, "client.js must not reference alien lanSettings");
+
+  // Mock Cordis Context with effects, locale, and settingsScope
+  let registeredLocales = null;
+  const activeEffects = [];
+  let unregisterCount = 0;
+
+  const mockCtx = {
+    locale: {
+      register: (ns, dicts) => {
+        registeredLocales = { ns, dicts };
+        return () => { unregisterCount += 1; };
+      }
+    },
+    effect: (fn, label) => {
+      activeEffects.push(label);
+      return fn();
+    },
+    settingsScope: {
+      bind: () => ({ getSnapshot: () => ({ status: 'ready' }), subscribe: () => () => {} }),
+      describe: () => ({
+        getSnapshot: () => ({ view: { namespaces: [{ ns: 'dsh-cost-meter' }] } }),
+        load: () => {}
+      })
+    },
+    slots: {
+      inject: (slot, cb) => cb(),
+      register: () => {}
+    }
+  };
+
+  // Run apply first time
+  modExports.apply(mockCtx);
+  assert.ok(registeredLocales, "locales registered");
+  assert.equal(registeredLocales.ns, "dsh-cost-meter");
+  assert.ok(registeredLocales.dicts.en, "en dictionary registered");
+  assert.ok(registeredLocales.dicts.zh, "zh dictionary registered");
+  assert.ok(activeEffects.includes("dsh-cost-meter: locale dictionaries"), "locale effect mounted");
+
+  // Run apply second time (re-mount / reload simulation)
+  assert.doesNotThrow(() => {
+    modExports.apply(mockCtx);
+  }, "multiple apply runs cleanly without throwing");
+});
