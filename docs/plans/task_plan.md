@@ -5,13 +5,13 @@ Systematically resolve all 11 open audit issues for `@goodandready/dsh-cost-mete
 
 ## Phases
 - [x] Phase 1: Core Package Identity, Route Security, and Artifact Cleanup (#29, #37, #35)
-- [ ] Phase 2: Refine npm Package Files Manifest and Remove Docs Duplicates (#30, #32)
+- [x] Phase 2: Refine npm Package Files Manifest and Remove Docs Duplicates (#30, #32)
 - [ ] Phase 3: Client Settings Scope, Locale Declaration and Effect Wrapping (#33, #38, #39)
 - [ ] Phase 4: UI Design Tokens, Canonical Chevron, and One-Click Auto-Updater (#34, #36, #31)
 - [ ] Final: Unified Release v0.8.3, Prod Rollout & Issue Closing
 
 ## Current Status
-Phase 1 complete. Proceeding to Phase 2.
+Phase 2 complete. Proceeding to Phase 3.
 
 ## Next Step
-Refine package.json files manifest, prune duplicate READMEs in docs/, and update test suite for Phase 2.
+Implement Phase 3: declare client locale inject, wrap locale registration in ctx.effect with cleanup, and use canonical settingsScope.

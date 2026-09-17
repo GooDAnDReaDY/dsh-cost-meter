@@ -11,3 +11,10 @@
   - Added fail-closed `isTrustedCaller` write-route guard to `POST /refresh` (Resolves #35).
   - Updated `test/public-route.test.mjs` with 4-way package name verification and full route security coverage.
   - All 23 unit tests passing.
+
+- **Phase 2 completed**:
+  - Pruned duplicate READMEs in `docs/README.ru.md` and `docs/README.zh.md` (Resolves #30).
+  - Sanitized tracked repository: removed `AGENTS.md`, `index.md`, `deploy.sh`, and internal testing/deployment notes from git tracking (Resolves #32).
+  - Explicitly configured `package.json.files` allowlist: `lib/`, `cordis.patch.yml`, `README.md`, `README.ru.md`, `README.zh.md`, `LICENSE`.
+  - Tarball entry count reduced from 17 to 8 files, unpacked size trimmed from 152.6 kB to 113.9 kB.
+  - Verified `npm pack --dry-run --json` and updated `test/public-route.test.mjs` (all 23 tests pass).

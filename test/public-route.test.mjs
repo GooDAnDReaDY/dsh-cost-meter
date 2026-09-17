@@ -12,11 +12,9 @@ const patch = await readFile(new URL('../cordis.patch.yml', import.meta.url), 'u
 const client = await readFile(new URL('../lib/client.js', import.meta.url), 'utf8')
 const sourceFiles = [
   'README.md',
-  'AGENTS.md',
-  'index.md',
+  'README.ru.md',
+  'README.zh.md',
   'docs/design/DESIGN.md',
-  'docs/testing/public-route.md',
-  'docs/deployment/public-release.md',
 ]
 
 test('public package identity is aligned across package, patch, and browser loader and server half', () => {
@@ -72,10 +70,14 @@ test('isTrustedCaller guards write routes against cross-origin and untrusted cal
   assert.equal(isTrustedCaller(null), false)
 })
 
-test('tarball metadata keeps only the public package name', () => {
-  assert.equal(pkg.files.includes('lib'), true)
-  assert.equal(pkg.files.includes('cordis.patch.yml'), true)
-  assert.equal(pkg.files.includes('docs'), true)
+test('tarball metadata keeps only the public package name and canonical files', () => {
+  const hasLib = pkg.files.includes('lib') || pkg.files.includes('lib/')
+  assert.equal(hasLib, true, 'files includes lib')
+  assert.equal(pkg.files.includes('cordis.patch.yml'), true, 'files includes cordis.patch.yml')
+  assert.equal(pkg.files.includes('README.md'), true, 'files includes README.md')
+  assert.equal(pkg.files.includes('README.ru.md'), true, 'files includes README.ru.md')
+  assert.equal(pkg.files.includes('README.zh.md'), true, 'files includes README.zh.md')
+  assert.equal(pkg.files.includes('docs'), false, 'files excludes whole docs folder')
   assert.equal(pkg.name.startsWith('@goodandready/'), true)
   assert.equal(pkg.name.includes('-private'), false)
 })

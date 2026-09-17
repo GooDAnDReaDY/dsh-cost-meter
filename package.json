@@ -11,10 +11,11 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "lib",
+    "lib/",
     "cordis.patch.yml",
     "README.md",
-    "docs",
+    "README.ru.md",
+    "README.zh.md",
     "LICENSE"
   ],
   "publishConfig": {
