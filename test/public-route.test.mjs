@@ -50,7 +50,7 @@ test('isTrustedCaller guards write routes against cross-origin and untrusted cal
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '::ffff:127.0.0.1' }, headers: {} }), true)
 
   // Non-loopback remote address
-  const remoteReq = { socket: { remoteAddress: '192.168.1.50' } }
+  const remoteReq = { socket: { remoteAddress: '198.51.100.50' } }
 
   // Same-origin sec-fetch-site allows
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-origin' } }), true)
@@ -60,10 +60,10 @@ test('isTrustedCaller guards write routes against cross-origin and untrusted cal
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'cross-site' } }), false)
 
   // Matching origin and host allows
-  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: '192.168.1.111:3080', origin: 'http://192.168.1.111:3080' } }), true)
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'example.local:3080', origin: 'http://example.local:3080' } }), true)
 
   // Mismatched origin and host rejects
-  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: '192.168.1.111:3080', origin: 'http://evil.com' } }), false)
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'example.local:3080', origin: 'http://evil.com' } }), false)
 
   // No headers and non-loopback rejects
   assert.equal(isTrustedCaller({ ...remoteReq, headers: {} }), false)
