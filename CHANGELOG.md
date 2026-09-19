@@ -2,6 +2,16 @@
 
 Notable changes to `@goodandready/dsh-cost-meter`.
 
+## 0.8.5
+
+### Fixed
+- **Settings reachable again on the plugin's own page**: the current DSH core
+  (0.1.6-alpha.2) renders a plugin's configuration page only for entries registered
+  in the plugin-list seat `plugins.item`. `CostMeterCard` is now registered there
+  (`id: 'dsh-cost-meter'`, order 20, static label) alongside the row seat and the
+  legacy card, and its page view renders the form open (`page || open`) instead of
+  collapsed.
+
 ## 0.8.4
 
 ### Fixed
