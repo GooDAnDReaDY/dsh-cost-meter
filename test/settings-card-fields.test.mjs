@@ -40,6 +40,6 @@ test('Config schema has all 10 fields and UI card supports all scalar settings',
   }
 
   // Verify safe service access patterns exist in client.js
-  assert.equal(clientCode.includes("ctx.get('settingsScope')"), true, 'Missing safe ctx.get for settingsScope')
+  assert.equal(clientCode.includes("ctx.get('configForms')"), true, 'Missing safe ctx.get for configForms')
   assert.equal(clientCode.includes("ctx.get('locale')"), true, 'Missing safe ctx.get for locale')
 })

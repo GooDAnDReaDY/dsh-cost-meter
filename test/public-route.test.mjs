@@ -163,12 +163,12 @@ test("client apply handles ctx.effect, locale undo, and multiple apply cleanly w
   const modExports = loadedDef.factory(fakeRequire);
 
   // Assert package.json client inject contains locale
-  assert.deepEqual(pkg.dsh.client.inject, ["@deepseek-ai/dsh-client-locale"]);
+  assert.deepEqual(pkg.dsh.client.inject, ["@deepseek-ai/dsh-client-locale", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-client-ui-settings"]);
 
   // Verify code does not contain any reference to lanSettings
   assert.doesNotMatch(code, /lanSettings/, "client.js must not reference alien lanSettings");
 
-  // Mock Cordis Context with effects, locale, and settingsScope
+  // Mock Cordis Context with effects, locale, and configForms
   let registeredLocales = null;
   const activeEffects = [];
   let unregisterCount = 0;
@@ -184,8 +184,7 @@ test("client apply handles ctx.effect, locale undo, and multiple apply cleanly w
       activeEffects.push(label);
       return fn();
     },
-    settingsScope: {
-      bind: () => ({ getSnapshot: () => ({ status: 'ready' }), subscribe: () => () => {} }),
+    configForms: { get: () => ({ getSnapshot: () => ({ status: 'ready' }), subscribe: () => () => {} }),
       describe: () => ({
         getSnapshot: () => ({ view: { namespaces: [{ ns: 'dsh-cost-meter' }] } }),
         load: () => {}
