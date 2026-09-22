@@ -1,3 +1,8 @@
+## 0.8.8
+
+### Fixed
+- Settings no longer wait on the removed settingsScope service. The client uses configForms (#54).
+
 # Changelog
 
 Notable changes to `@goodandready/dsh-cost-meter`.
