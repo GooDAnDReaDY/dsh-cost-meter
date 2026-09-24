@@ -74,3 +74,72 @@ test('resolveTariff honors provider-aware resolution', () => {
   assert.equal(unknown.source, 'none')
   assert.equal(unknown.schedule, null)
 })
+
+test('scheduleOf preserves explicit zero override and falls back for omitted fields (Issue #52)', () => {
+  const models = [
+    {
+      id: 'vendor/free-night-model',
+      pricing: {
+        prompt: '0.000002',
+        completion: '0.000008',
+        input_cache_read: '0.0000005',
+        input_cache_write: '0.000001',
+        overrides: [
+          {
+            utc_start: 0,
+            utc_end: 800,
+            prompt: '0', // Explicit zero: 0 per million
+            input_cache_read: 0, // Explicit zero numeric
+            // completion is omitted: should fall back to base (8)
+            // input_cache_write is omitted: should fall back to base (1)
+          }
+        ]
+      }
+    }
+  ]
+  const index = indexCatalog(models)
+  const entry = index.byId['vendor/free-night-model']
+  assert.ok(entry, 'catalog entry exists')
+  assert.equal(entry.base.input, 2)
+  assert.equal(entry.base.output, 8)
+  assert.equal(entry.base.cacheHit, 0.5)
+  assert.equal(entry.base.cacheWrite, 1)
+
+  assert.equal(entry.windows.length, 1)
+  const win = entry.windows[0]
+  assert.equal(win.rates.input, 0, 'explicit zero prompt must not fall back to base price')
+  assert.equal(win.rates.cacheHit, 0, 'explicit zero cacheHit must not fall back to base price')
+  assert.equal(win.rates.output, 8, 'omitted completion falls back to base price')
+  assert.equal(win.rates.cacheWrite, 1, 'omitted cacheWrite falls back to base price')
+})
+
+test('matchModel suffix disambiguation with multiple candidates (Issue #53)', () => {
+  const models = [
+    { id: 'vendor-a/shared-model-name', pricing: { prompt: '0.000001', completion: '0.000002' } },
+    { id: 'vendor-b/shared-model-name', pricing: { prompt: '0.000003', completion: '0.000004' } },
+    { id: 'unique-vendor/unique-model', pricing: { prompt: '0.000005', completion: '0.000006' } }
+  ]
+  const index = indexCatalog(models)
+
+  // Single candidate matches by suffix
+  assert.equal(
+    matchModel(index, { provider: 'unknown-vendor', model: 'unique-model' }, {}),
+    'unique-vendor/unique-model'
+  )
+
+  // Multiple candidates match by suffix: resolves via provider prefix match
+  assert.equal(
+    matchModel(index, { provider: 'vendor-b', model: 'shared-model-name' }, {}),
+    'vendor-b/shared-model-name'
+  )
+  assert.equal(
+    matchModel(index, { provider: 'vendor-a', model: 'shared-model-name' }, {}),
+    'vendor-a/shared-model-name'
+  )
+
+  // Multiple candidates match by suffix: unknown provider returns undefined (no arbitrary guess)
+  assert.equal(
+    matchModel(index, { provider: 'vendor-c', model: 'shared-model-name' }, {}),
+    undefined
+  )
+})
