@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { hhmmToMinutes, parseWindow, indexCatalog, matchModel, resolveTariff, slotOf } from '../lib/index.js'
+import { hhmmToMinutes, parseWindow, indexCatalog, matchModel, resolveTariff, slotOf, usageByModelProjection, apply } from '../lib/index.js'
 
 test('hhmmToMinutes and parseWindow handle valid and boundary inputs', () => {
   assert.equal(hhmmToMinutes(0), 0)
@@ -142,4 +142,167 @@ test('matchModel suffix disambiguation with multiple candidates (Issue #53)', ()
     matchModel(index, { provider: 'vendor-c', model: 'shared-model-name' }, {}),
     undefined
   )
+})
+
+test('usageByModelProjection satisfies production contract and validates schemas (Issue #58)', () => {
+  assert.equal(usageByModelProjection.key, 'costByModel')
+  assert.equal(usageByModelProjection.stateVersion, 2)
+  assert.ok(usageByModelProjection.stateSchema, 'stateSchema exists')
+  assert.ok(usageByModelProjection.wire, 'wire exists')
+  assert.ok(usageByModelProjection.wire.viewSchema, 'wire.viewSchema exists')
+  assert.equal(typeof usageByModelProjection.wire.view, 'function')
+
+  // 1. Initial state
+  const state0 = usageByModelProjection.init()
+  assert.doesNotThrow(() => usageByModelProjection.stateSchema.parse(state0), 'init passes stateSchema')
+  const view0 = usageByModelProjection.wire.view(state0)
+  assert.doesNotThrow(() => usageByModelProjection.wire.viewSchema.parse(view0), 'init view passes viewSchema')
+  assert.deepEqual(view0, { models: [] })
+
+  // 2. Event: request/header sets the active route
+  const eventHeader = {
+    type: 'request/header',
+    data: {
+      header: {
+        config: { provider: 'deepseek', model: 'deepseek-chat' }
+      }
+    }
+  }
+  const state1 = usageByModelProjection.apply(state0, eventHeader)
+  assert.deepEqual(state1.route, { provider: 'deepseek', model: 'deepseek-chat' })
+  assert.doesNotThrow(() => usageByModelProjection.stateSchema.parse(state1))
+
+  // 3. Event: assistant/message with token usage
+  const eventMsg = {
+    type: 'assistant/message',
+    time: Date.UTC(2026, 8, 25, 12, 0, 0), // slot 24
+    data: {
+      turn: 1,
+      step: 0,
+      usage: {
+        inputTokens: 100,
+        outputTokens: 50,
+        cacheReadTokens: 30,
+        cacheWriteTokens: 10,
+      }
+    }
+  }
+  const state2 = usageByModelProjection.apply(state1, eventMsg)
+  assert.doesNotThrow(() => usageByModelProjection.stateSchema.parse(state2))
+
+  const view2 = usageByModelProjection.wire.view(state2)
+  assert.doesNotThrow(() => usageByModelProjection.wire.viewSchema.parse(view2))
+  assert.equal(view2.models.length, 1)
+  assert.equal(view2.models[0].provider, 'deepseek')
+  assert.equal(view2.models[0].model, 'deepseek-chat')
+  assert.deepEqual(view2.models[0].slots['24'], {
+    uncachedInputTokens: 100,
+    outputTokens: 50,
+    cacheReadTokens: 30,
+    cacheWriteTokens: 10,
+  })
+
+  // 4. Duplicate event deduplication (same turn, step, slot, buckets)
+  const state2Dup = usageByModelProjection.apply(state2, eventMsg)
+  assert.equal(state2Dup, state2, 'duplicate usage event returns same state reference')
+
+  // 5. Checkpoint serialize and restore
+  const checkpoint = JSON.stringify(state2)
+  const restored = JSON.parse(checkpoint)
+  assert.doesNotThrow(() => usageByModelProjection.stateSchema.parse(restored), 'restored checkpoint passes stateSchema')
+  const restoredView = usageByModelProjection.wire.view(restored)
+  assert.doesNotThrow(() => usageByModelProjection.wire.viewSchema.parse(restoredView), 'restored view passes viewSchema')
+  assert.deepEqual(restoredView, view2)
+})
+
+test('apply registers usageByModelProjection in sessionProjections (Issue #58)', () => {
+  let registeredDef = null
+  const listeners = new Map()
+
+  const fakeCtx = {
+    on(event, handler) {
+      if (!listeners.has(event)) listeners.set(event, [])
+      listeners.get(event).push(handler)
+    },
+    emit(event, ...args) {
+      for (const h of listeners.get(event) || []) h(...args)
+    },
+    inject(deps, fn) {
+      if (deps.includes('sessionProjections')) {
+        fn({
+          sessionProjections: {
+            register(def) {
+              registeredDef = def
+            }
+          }
+        })
+      }
+    },
+    effect(fn) {
+      fn()
+    },
+    webServer: {
+      register() {}
+    }
+  }
+
+  apply(fakeCtx, { prices: {} })
+  assert.ok(registeredDef, 'sessionProjections.register was called')
+  assert.equal(registeredDef.key, 'costByModel')
+  assert.equal(registeredDef.stateVersion, 2)
+  assert.ok(registeredDef.stateSchema)
+  assert.ok(registeredDef.wire.viewSchema)
+})
+
+test('apply does not call settings.register and handles SettingsForms lifecycle (Issue #59)', () => {
+  const listeners = new Map()
+  let settingsRegisterCalled = false
+  let describeCalledWith = null
+
+  const fakeCtx = {
+    on(event, handler) {
+      if (!listeners.has(event)) listeners.set(event, [])
+      listeners.get(event).push(handler)
+    },
+    emit(event, ...args) {
+      for (const h of listeners.get(event) || []) h(...args)
+    },
+    inject(deps, fn) {
+      if (deps.includes('settings')) {
+        // Modern SettingsForms: has describe, replace, update, NO register!
+        const modernSettings = {
+          describe(ns) {
+            describeCalledWith = ns
+            return { value: { currency: 'EUR', usdRate: 0.92 } }
+          },
+          update() {},
+          replace() {},
+        }
+        fn({ settings: modernSettings })
+      }
+      if (deps.includes('sessionProjections')) {
+        fn({ sessionProjections: { register() {} } })
+      }
+    },
+    effect(fn) {
+      fn()
+    },
+    webServer: {
+      register() {}
+    }
+  }
+
+  // Boot: apply should NOT throw error even without settings.register
+  assert.doesNotThrow(() => {
+    apply(fakeCtx, { currency: '$', usdRate: 1 })
+  })
+
+  assert.equal(settingsRegisterCalled, false, 'settings.register was never called')
+  assert.equal(describeCalledWith, 'dsh-cost-meter', 'settings.describe was called for dsh-cost-meter')
+
+  // Live settings update reaction
+  assert.doesNotThrow(() => {
+    fakeCtx.emit('settings/updated', 'dsh-cost-meter', { currency: 'GBP', usdRate: 0.78 })
+    fakeCtx.emit('settings/document-updated', 'dsh-cost-meter')
+  })
 })
