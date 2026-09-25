@@ -44,26 +44,35 @@ test('published docs do not prescribe local installs or machine-specific paths',
 })
 
 test('isTrustedCaller guards write routes against cross-origin and untrusted callers', () => {
-  // Loopback socket allows
+  // Direct loopback socket without browser headers allows (e.g. curl/internal script)
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: {} }), true)
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '::1' }, headers: {} }), true)
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '::ffff:127.0.0.1' }, headers: {} }), true)
+
+  // Reverse proxy loopback with cross-site or mismatched origin MUST reject (Issue #35)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { 'sec-fetch-site': 'cross-site' } }), false)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { 'sec-fetch-site': 'same-site' } }), false)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { host: 'example.local:3080', origin: 'http://evil.com' } }), false)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { host: 'example.local:3080', referer: 'http://evil.com/page' } }), false)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { host: 'example.local:3080', origin: 'http://example.local:3080' } }), true)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { host: 'example.local:3080', referer: 'http://example.local:3080/app' } }), true)
 
   // Non-loopback remote address
   const remoteReq = { socket: { remoteAddress: '198.51.100.50' } }
 
   // Same-origin sec-fetch-site allows
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-origin' } }), true)
-  assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-site' } }), true)
-
-  // Cross-site sec-fetch-site rejects
+  // Cross-site and same-site sec-fetch-site rejects without origin matching host
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-site' } }), false)
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'cross-site' } }), false)
 
-  // Matching origin and host allows
+  // Matching origin and host allows (with x-forwarded-host support)
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'example.local:3080', origin: 'http://example.local:3080' } }), true)
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'internal:3080', 'x-forwarded-host': 'public.example.com', origin: 'https://public.example.com' } }), true)
 
   // Mismatched origin and host rejects
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'example.local:3080', origin: 'http://evil.com' } }), false)
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'example.local:3080', referer: 'http://evil.com/index.html' } }), false)
 
   // No headers and non-loopback rejects
   assert.equal(isTrustedCaller({ ...remoteReq, headers: {} }), false)
