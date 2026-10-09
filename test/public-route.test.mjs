@@ -49,6 +49,15 @@ test('isTrustedCaller guards write routes against cross-origin and untrusted cal
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '::1' }, headers: {} }), true)
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '::ffff:127.0.0.1' }, headers: {} }), true)
 
+  // DSH Desktop: custom protocol (dsh-app://) from loopback socket allows (Issue #75)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { host: '127.0.0.1:3080', referer: 'dsh-app://app/' } }), true)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '::1' }, headers: { referer: 'dsh-app://app/index.html' } }), true)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { host: '127.0.0.1:3080', origin: 'dsh-app://app' } }), true)
+
+  // DSH Desktop custom protocol from non-loopback socket MUST reject
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '198.51.100.50' }, headers: { referer: 'dsh-app://app/' } }), false)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '198.51.100.50' }, headers: { origin: 'dsh-app://app' } }), false)
+
   // Reverse proxy loopback with cross-site or mismatched origin MUST reject (Issue #35)
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { 'sec-fetch-site': 'cross-site' } }), false)
   assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: { 'sec-fetch-site': 'same-site' } }), false)
