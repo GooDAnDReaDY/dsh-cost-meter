@@ -1,3 +1,8 @@
+## 0.8.11
+
+### Security
+- **DSH Desktop Support in Write Route Guard**: Allowed non-http/https Referer and Origin schemes (e.g. `dsh-app://app/`) in `isTrustedCaller` when requests originate from a loopback socket (`127.0.0.1`, `::1`), restoring full functionality of the cost widget and catalog refresh in DSH Desktop while continuing to reject non-loopback external callers with custom schemes (#75).
+
 ## 0.8.10
 
 ### Security
