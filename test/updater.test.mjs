@@ -53,6 +53,43 @@ test('updater: isTrustedUpdateRequest security checks fail-closed', () => {
   }), false)
 })
 
+test('updater: registerPluginUpdater handles HEAD requests without body (Issue #68)', async () => {
+  const { registerPluginUpdater } = await import('../lib/updater.js')
+  let registeredHandler = null
+  const mockCtx = {
+    webServer: {
+      register: (reg) => {
+        registeredHandler = reg.handler
+      },
+    },
+  }
+  registerPluginUpdater(mockCtx, {
+    endpoint: '/test/update',
+    packageName: '@goodandready/dsh-cost-meter',
+    manifestUrl: new URL('../package.json', import.meta.url),
+  })
+
+  assert.ok(registeredHandler, 'updater route registered')
+  let writtenStatus = null
+  let writtenHeaders = null
+  let writtenData = null
+  const res = {
+    writeHead: (status, headers) => {
+      writtenStatus = status
+      writtenHeaders = headers
+    },
+    end: (data) => {
+      writtenData = data
+    },
+  }
+
+  await registeredHandler({ method: 'HEAD' }, res)
+  assert.equal(writtenStatus, 200)
+  assert.equal(writtenHeaders['content-type'], 'application/json; charset=utf-8')
+  assert.equal(writtenHeaders['cache-control'], 'no-store')
+  assert.equal(writtenData, undefined, 'HEAD response must have no body')
+})
+
 test('updater: checkUpdateStatus inspects package manifest', async () => {
   const manifestUrl = new URL('../package.json', import.meta.url)
   const status = await checkUpdateStatus(

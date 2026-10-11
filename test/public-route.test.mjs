@@ -26,6 +26,14 @@ test('public package identity is aligned across package, patch, and browser load
   assert.equal(pkg.publishConfig.access, 'public')
 })
 
+test('GET /state route enforces isTrustedCaller and rejects untrusted callers (Issue #66)', () => {
+  // Loopback callers are allowed
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '127.0.0.1' }, headers: {} }), true)
+  // Non-loopback cross-origin or untrusted callers are rejected
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '198.51.100.50' }, headers: { origin: 'http://evil.com', host: 'example.local:3080' } }), false)
+  assert.equal(isTrustedCaller({ socket: { remoteAddress: '198.51.100.50' }, headers: { 'sec-fetch-site': 'cross-site' } }), false)
+})
+
 test('published docs do not prescribe local installs or machine-specific paths', async () => {
   const forbidden = [/file:/i, /link:/i, /(?:\/home\/|\/mnt\/|[A-Z]:\\)/, /192\.168\./, /codex_[^\s/]+/i, /goodandready-private/i]
   for (const relative of sourceFiles) {
@@ -75,9 +83,12 @@ test('isTrustedCaller guards write routes against cross-origin and untrusted cal
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-site' } }), false)
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'cross-site' } }), false)
 
-  // Matching origin and host allows (with x-forwarded-host support)
+  // Matching origin and host allows
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'example.local:3080', origin: 'http://example.local:3080' } }), true)
-  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'internal:3080', 'x-forwarded-host': 'public.example.com', origin: 'https://public.example.com' } }), true)
+  // Issue #70: x-forwarded-host MUST NOT be trusted for origin validation
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'internal:3080', 'x-forwarded-host': 'public.example.com', origin: 'https://public.example.com' } }), false)
+  // Spoofed host header via x-forwarded-host from untrusted source rejects
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'internal:3080', 'x-forwarded-host': 'evil.example', origin: 'http://evil.example' } }), false)
 
   // Mismatched origin and host rejects
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { host: 'example.local:3080', origin: 'http://evil.com' } }), false)
