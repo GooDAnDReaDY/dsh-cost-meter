@@ -1,3 +1,10 @@
+## 0.8.12
+
+### Security
+- **Strict Host Header Origin Validation**: Removed unverified `x-forwarded-host` parsing in `isTrustedCaller` to prevent Host/Origin header spoofing from untrusted remote callers (#70).
+- **Protected State Route**: Applied `isTrustedCaller` guard to `GET /dsh-cost-meter/state` to prevent cross-origin extraction of configured tariffs, model mappings, and spend budget limits (#66).
+- **Body-less HEAD Responses**: Corrected `registerPluginUpdater` handler to emit headers only without JSON payload on HTTP `HEAD` requests (#68).
+
 ## 0.8.11
 
 ### Security
