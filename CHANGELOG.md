@@ -1,3 +1,9 @@
+## 0.8.13
+
+### Fixed
+- **Volatile Reference Unwrapping in Tariff Engine**: Recursively unwrap cosmokit / Schemastery `Volatile<T>` reference boxes in tariff rate calculations (`perMillion`, `overrideBucket`, `resolveTariff`), preventing `NaN` and silent zero-pricing (#67).
+- **Peak Windows Iterable Guard**: Safely validate that `manualPeakWindowsUtc` is an array before iteration, avoiding runtime `TypeError` when wrapped in volatile boxes (#67).
+
 ## 0.8.12
 
 ### Security
