@@ -254,10 +254,11 @@ test('apply registers usageByModelProjection in sessionProjections (Issue #58)',
   assert.ok(registeredDef.wire.viewSchema)
 })
 
-test('apply does not call settings.register and handles SettingsForms lifecycle (Issue #59)', () => {
+test('apply does not call settings.register and handles SettingsForms lifecycle (Issues #59, #62, #63, #64, #65, #69)', () => {
   const listeners = new Map()
   let settingsRegisterCalled = false
   let describeCalledWith = null
+  let currentVal = { currency: 'EUR', usdRate: 0.92 }
 
   const fakeCtx = {
     on(event, handler) {
@@ -269,11 +270,14 @@ test('apply does not call settings.register and handles SettingsForms lifecycle 
     },
     inject(deps, fn) {
       if (deps.includes('settings')) {
-        // Modern SettingsForms: has describe, replace, update, NO register!
+        // DSH 0.2 SettingsForms: describe(options) returns an array of descriptors
         const modernSettings = {
-          describe(ns) {
-            describeCalledWith = ns
-            return { value: { currency: 'EUR', usdRate: 0.92 } }
+          describe(opts) {
+            describeCalledWith = opts
+            return [
+              { ns: 'agent-default-model', value: { provider: 'test', model: 'test' } },
+              { ns: 'dsh-cost-meter', value: currentVal },
+            ]
           },
           update() {},
           replace() {},
@@ -298,11 +302,11 @@ test('apply does not call settings.register and handles SettingsForms lifecycle 
   })
 
   assert.equal(settingsRegisterCalled, false, 'settings.register was never called')
-  assert.equal(describeCalledWith, 'dsh-cost-meter', 'settings.describe was called for dsh-cost-meter')
+  assert.deepEqual(describeCalledWith, { redactSecrets: true }, 'settings.describe was called with options object')
 
-  // Live settings update reaction
+  // Live settings update reaction via settings/document-updated
+  currentVal = { currency: 'GBP', usdRate: 0.78 }
   assert.doesNotThrow(() => {
-    fakeCtx.emit('settings/updated', 'dsh-cost-meter', { currency: 'GBP', usdRate: 0.78 })
     fakeCtx.emit('settings/document-updated', 'dsh-cost-meter')
   })
 })
