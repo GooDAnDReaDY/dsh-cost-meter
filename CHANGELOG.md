@@ -1,3 +1,9 @@
+## 0.8.16
+
+### Fixed
+- **Client Fetch Timeouts & Component Unmount Cancellation**: Wrapped all 5 client fetch requests (`/update` GET/POST, `/state` polling/diagnostics, `/refresh` POST) in `fetchWithTimeout` using `AbortSignal.timeout` and component unmount abort signals, eliminating hung requests and persistent loading indicators on network latency (#73).
+- **Facade Decomposition & Modularity**: Decomposed `lib/index.js` into modular `lib/projection.js` (per-model token bucket projections) and `lib/routes.js` (HTTP route handlers), reducing `lib/index.js` to 288 LOC (< 320 LOC requirement) while preserving all public exports and complete backward compatibility (#74).
+
 ## 0.8.15
 
 ### Fixed
