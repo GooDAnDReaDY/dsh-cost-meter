@@ -109,3 +109,47 @@ test('v0.8.1: resolveTariff caching behavior and resilience', () => {
   assert.equal(res.source, 'manual')
   assert.equal(res.schedule.base.input, 1.0)
 })
+
+test('Issue #67: tariff parsing safely unwraps Volatile boxed numerics and peak windows', async () => {
+  const { unwrapVolatile, perMillion, overrideBucket } = await import('../lib/tariff.js')
+
+  // Boxed volatile number in perMillion
+  const boxedPrice = { get: () => '0.0000015' }
+  assert.equal(perMillion(boxedPrice), 1.5)
+
+  // Boxed volatile number in overrideBucket
+  const boxedOverride = { get: () => 2.5 }
+  assert.equal(overrideBucket(boxedOverride, 1.0), 2.5 * 1e6)
+
+  // Boxed volatile values in resolveTariff
+  const volatileCfg = {
+    prices: {
+      'custom/boxed': {
+        input: { get: () => 1.25 },
+        output: { get: () => 2.5 },
+        cacheHit: { get: () => 0.1 },
+        cacheWrite: { get: () => 0.2 },
+      },
+    },
+    manualOffPeakMultiplier: { get: () => 0.5 },
+    manualPeakWindowsUtc: { get: () => ['10:00-14:00'] },
+  }
+
+  const index = indexCatalog([])
+  const res = resolveTariff(volatileCfg, index, { provider: 'custom', model: 'boxed' })
+  assert.equal(res.source, 'manual')
+  assert.equal(res.schedule.windows.length, 1)
+  assert.equal(res.schedule.windows[0].start, 600)
+  assert.equal(res.schedule.windows[0].end, 840)
+  assert.equal(res.schedule.windows[0].rates.input, 1.25)
+  assert.equal(res.schedule.base.input, 0.625)
+
+  // manualPeakWindowsUtc is non-array volatile or undefined doesn't throw TypeError
+  const nullWindowsCfg = {
+    prices: { 'test/model': { input: 1 } },
+    manualPeakWindowsUtc: { get: () => null },
+  }
+  const resNull = resolveTariff(nullWindowsCfg, index, { provider: 'test', model: 'model' })
+  assert.equal(resNull.source, 'manual')
+  assert.equal(resNull.schedule.windows.length, 0)
+})
