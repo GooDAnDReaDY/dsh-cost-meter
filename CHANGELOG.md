@@ -1,3 +1,9 @@
+## 0.8.14
+
+### Fixed
+- **Settings Surface Publication on DSH 0.2**: Marked all configurable `Config` fields with `.volatile()` and ensured `.volatile()` helper prototype exists, enabling DSH 0.2 settings service to publish the `dsh-cost-meter` card and accept UI edits (#62).
+- **SettingsForms Migration & Live Document Updates**: Migrated settings descriptor resolution to `describe({ redactSecrets: true })` array pattern and replaced dead `settings/updated` event listener with `settings/document-updated` to hydrate live config without restarting the plugin (#63, #64, #65, #69).
+
 ## 0.8.13
 
 ### Fixed
