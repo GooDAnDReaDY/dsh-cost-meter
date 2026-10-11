@@ -1,3 +1,9 @@
+## 0.8.15
+
+### Fixed
+- **Session Projection Effect Disposer**: Wrapped `sessionProjections.register` into an `effect` registration with safe fallback, ensuring proper cleanup upon plugin reload without state leaks (#71).
+- **Service Injection & Peer Dependencies Declaration**: Added `settings` and `sessionProjections` to `export const inject` and declared `@deepseek-ai/dsh-host-webserver`, `@deepseek-ai/dsh-session-projection`, `@deepseek-ai/dsh-settings` in `peerDependencies` (#72).
+
 ## 0.8.14
 
 ### Fixed
