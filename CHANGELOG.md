@@ -1,3 +1,11 @@
+## 0.8.17
+
+### Security
+- **Strict Connection Authentication Boundary**: Integrated canonical DSH `connection.requestRejection(request)` verification inside `isTrustedCaller`, enforcing fail-closed rejection against unauthorized LAN callers and external clients attempting to read telemetry state or trigger catalog refetches without valid DSH session credentials (#89).
+
+### Fixed
+- **Startup Volatile Box Unwrapping & Config Normalization**: Added `normalizeConfig()` wrapping `unwrapVolatile()` on plugin boot, in settings hydration, and in route handlers. Guarantees scalar primitives for `currency`, `usdRate`, `displayTimeZone`, and `budgetThreshold`, preventing raw `Volatile` reference boxes from leaking into routes and serializing as `{}` or `NaN` (#89).
+
 ## 0.8.16
 
 ### Fixed
