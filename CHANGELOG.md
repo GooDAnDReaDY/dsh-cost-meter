@@ -1,3 +1,10 @@
+## 0.8.21
+
+### Added
+- **Burn Rate & Cost Projection**: Added dedicated `lib/analytics.js` calculating `burnRatePerHourUsd` and session `projectedCostUsd` with zero-division protection and initial-turn stability safeguards (#95).
+- **Session Telemetry State**: Extended `GET /dsh-cost-meter/state` with `burnRatePerHourUsd` and `projectedCostUsd` fields (#95).
+- **UI Projection Box**: Rendered live burn rate and projected final cost directly in the popover panel in user-selected currency (#95).
+
 ## 0.8.20
 
 ### Added
