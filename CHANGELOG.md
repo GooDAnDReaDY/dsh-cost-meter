@@ -1,3 +1,8 @@
+## 0.8.18
+
+### Added
+- **Prompt Cache Savings Meter**: Added `calculateCacheSavings(usage, rates)` in `lib/tariff.js` and `cacheSavingsBySlots(slots, schedule)` in `lib/client.js`. Accurately calculates dollar and percentage savings gained from prompt cache hits across single and multi-model sessions with peak/off-peak windows, surfacing savings directly in the header chip tooltip and copyable session report (#92).
+
 ## 0.8.17
 
 ### Security
