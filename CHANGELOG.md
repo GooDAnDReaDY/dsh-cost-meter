@@ -1,3 +1,9 @@
+## 0.8.22
+
+### Added
+- **Minimalist Pill Mode**: Added configurable `displayMode: z.union(['auto', 'full', 'compact'])` in `Config` and UI settings card, allowing users to collapse the header chip into a minimalist compact pill (`● ₽42.50`) (#96).
+- **Responsive Mobile Styling**: Added `@media (max-width: 768px)` stylesheet rules hiding the timer and constraining popover panel width (`width: min(320px, calc(100vw - 32px))`) to eliminate horizontal scrolling on mobile viewports (#96).
+
 ## 0.8.21
 
 ### Added
