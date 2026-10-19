@@ -120,6 +120,7 @@ test('Issue #89: registerRoutes passes ctx to isTrustedCaller and serializes cle
   const rawBoxesConfig = {
     currency: box('EUR'),
     usdRate: box(0.92),
+    autoFxRate: box(false),
     displayTimeZone: box('UTC'),
     budgetThreshold: box(100),
   }
