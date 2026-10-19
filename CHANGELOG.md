@@ -1,3 +1,9 @@
+## 0.8.20
+
+### Added
+- **Mini Sparkline**: Added native SVG step dynamics chart in the popover panel (`lib/client.js`), rendering token and cost distribution across session steps with interactive tooltips and peak step highlighting without external chart dependencies (#94).
+- **Session Turns History**: Added turn and step tracking in `usageByModelProjection` (`lib/projection.js`) with deduplication across streaming chunks and a bounded memory history capped to the last 30 turns (`MAX_TURNS_HISTORY = 30`), exposed via `GET /dsh-cost-meter/state` (#94).
+
 ## 0.8.19
 
 ### Added
