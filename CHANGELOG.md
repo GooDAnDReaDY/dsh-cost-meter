@@ -1,3 +1,9 @@
+## 0.8.19
+
+### Added
+- **Live Foreign Exchange (FX) Rates**: Added dedicated `lib/fx.js` module automatically fetching live currency exchange rates from the Bank of Russia (CBR daily API) with fail-safe fallback to open.er-api.com and persistent offline disk caching in `~/.dsh/storages/dsh-cost-meter-fx.json`.
+- **Configurable Auto-FX**: Introduced `autoFxRate: z.boolean().default(true).volatile()` in `Config` schema, ensuring non-USD currency spends (RUB, EUR, CNY) reflect real-world exchange rates without requiring manual rate updates (#93).
+
 ## 0.8.18
 
 ### Added
