@@ -97,6 +97,12 @@
 
 # Changelog
 
+## [0.8.23] - 2026-10-20
+
+### Fixed
+- **UI TDZ ReferenceError**: Resolved runtime `ReferenceError: Cannot access 'state' before initialization` in `CostMeter` component on DSH Desktop and WebUI (#108).
+- **Popover Sparkline & Projection Placement**: Correctly integrated `renderSparkline` and hourly burn rate / cost projection within the popover panel.
+
 Notable changes to `@goodandready/dsh-cost-meter`.
 
 ## 0.8.6
