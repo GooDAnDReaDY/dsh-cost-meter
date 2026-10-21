@@ -137,10 +137,10 @@ test('matchModel suffix disambiguation with multiple candidates (Issue #53)', ()
     'vendor-a/shared-model-name'
   )
 
-  // Multiple candidates match by suffix: unknown provider returns undefined (no arbitrary guess)
+  // Multiple candidates match by suffix: unknown provider falls back to first catalog candidate (Issue #113)
   assert.equal(
     matchModel(index, { provider: 'vendor-c', model: 'shared-model-name' }, {}),
-    undefined
+    'vendor-a/shared-model-name'
   )
 })
 
