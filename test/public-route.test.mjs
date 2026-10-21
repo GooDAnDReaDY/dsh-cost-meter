@@ -77,8 +77,8 @@ test('isTrustedCaller guards write routes against cross-origin and untrusted cal
   // Non-loopback remote address
   const remoteReq = { socket: { remoteAddress: '198.51.100.50' } }
 
-  // Same-origin sec-fetch-site allows
-  assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-origin' } }), true)
+  // Issue #107: Sec-fetch-site alone without matching origin/host does not authenticate remote requests
+  assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-origin' } }), false)
   // Cross-site and same-site sec-fetch-site rejects without origin matching host
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'same-site' } }), false)
   assert.equal(isTrustedCaller({ ...remoteReq, headers: { 'sec-fetch-site': 'cross-site' } }), false)
