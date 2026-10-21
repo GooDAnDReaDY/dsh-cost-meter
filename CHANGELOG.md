@@ -97,6 +97,11 @@
 
 # Changelog
 
+## [0.8.24] - 2026-10-21
+
+### Security
+- **LAN Authentication Guard**: Blocked unauthenticated LAN access to `GET /dsh-cost-meter/state` and `POST /dsh-cost-meter/refresh`. Disallowed trusting `Sec-Fetch-Site: same-origin` without matching `Origin`/`Host` or loopback; enforced fail-closed behavior when connection service is unavailable for remote callers (#107).
+
 ## [0.8.23] - 2026-10-20
 
 ### Fixed
