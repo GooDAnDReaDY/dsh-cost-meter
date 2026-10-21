@@ -1,3 +1,10 @@
+## 0.8.25
+
+### Changed
+- **Model Name Display Only**: Stripped provider prefixes (e.g. `ollama-cloud / `) across all UI surfaces (chip tooltip, popovers, diagnostics, session report), displaying solely the clean model name (#113).
+- **Dynamic Active Session Model Binding**: Subscribed CostMeter to DSH's `modelSelection` projection (`next` / `lastUsed`) and passed `currentRoute` query parameter to `/dsh-cost-meter/state`, ensuring the header chip immediately tracks the model selected in the chat rather than remaining frozen on the server default route (#113).
+- **Tariff Fallback & Suffix Prefix Matching**: Relaxed `matchModel` catalog lookup to fall back to the first available catalog candidate when custom providers are used, and added prefix matching for short model names like `beam` to match OpenRouter entries (#113).
+
 ## 0.8.22
 
 ### Added
