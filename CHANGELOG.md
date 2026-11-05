@@ -104,6 +104,19 @@
 
 # Changelog
 
+## 0.8.29
+
+### Added
+- **Context Window Saturation Gauge & Compaction Risk Indicator (#137)**:
+  - Added `calculateContextMetrics` and model context limits database `getFallbackContextLength` supporting DeepSeek (64k-128k), Claude (200k), GPT-4o (128k), Gemini (1M-2M), Qwen (32k-1M), Mistral, and Llama series.
+  - Visual saturation progress bar (`dcm-ctx-gauge`) in popover telemetry with risk thresholds: Low (<70%, green/neutral), Moderate (70-90%, warning yellow), and High (≥90%, danger red).
+  - Turn base-cost estimate: dynamically computes the token baseline cost for the subsequent prompt turn based on accumulated context history.
+  - Compaction risk warning banner alerting users before conversation truncation or auto-compaction occurs.
+- **Smooth Odometer Cost Counter Animation During Streaming (#141)**:
+  - Added 60fps requestAnimationFrame cubic-eased ticker (`AnimatedCost` / `useAnimatedNumber`) for fluid price transitions during token streaming.
+  - Full accessibility compliance respecting `prefers-reduced-motion: reduce` with instant number updates.
+  - Isolated render lifecycle preventing Rules of Hooks violations and preserving lightweight CPU footprint.
+
 ## 0.8.28
 
 ### Added
