@@ -104,6 +104,21 @@
 
 # Changelog
 
+## 0.8.26
+
+### Added
+- **Pre-switch tariff alerts & desktop notifications (#117)**:
+  - Visual pulse animation on chip (`dcm-chip-alert-peak` / `dcm-chip-alert-offpeak`) and popover alert banner before peak and off-peak tariff switch.
+  - Configurable alert lead time (1, 2, 5, 10 minutes, default 5 min).
+  - Optional desktop browser notifications via HTML5 Web Notifications API (`Notification.requestPermission`) with 'Test Notification' button in settings.
+- **Per-turn token & cost inspector (#120)**:
+  - Integrated into assistant message action bar slot (`conversation.chat.assistant-actions`) with one-click token badge.
+  - Detailed modal inspector displaying exact turn metrics: uncached input, cache read (hit %), output, generation duration, and cost delta.
+  - Interactive turn history breakdown list inside the main header popover under sparkline.
+- **Slash command `/cost` and `/cost-summary` (#125)**:
+  - Built-in slash commands `/cost` (alias `/cost-summary`), with subcommands `receipt`, `summary`, `reset`, `help`.
+  - Structured Markdown receipt table detailing session spend, token breakdown, cache savings %, active tariff tier, and burn rate.
+
 ## [0.8.24] - 2026-10-21
 
 ### Security
