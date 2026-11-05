@@ -104,6 +104,15 @@
 
 # Changelog
 
+## 0.8.30
+
+### Fixed
+- **Settings Card Initial Render Crash (#168)**:
+  - Eliminated `TypeError: Cannot read properties of null (reading 'currency')` when opening the plugin settings panel (`plugins.item`) before `draft` state is populated.
+  - Replaced fragile ternary patterns with safe optional chaining (`draft?.currency ?? ''`) across all form inputs and select elements.
+  - Added loading placeholder (`settings.loading`) while `status === 'loading' || !draft`.
+  - Added dedicated UI section for Widget Visibility & Privacy Settings, persisting `showHeaderChip`, `showMessageAction`, `privacyMode`, and alert parameters in `save()`.
+
 ## 0.8.29
 
 ### Added
