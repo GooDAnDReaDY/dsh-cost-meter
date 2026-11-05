@@ -104,6 +104,20 @@
 
 # Changelog
 
+## 0.8.27
+
+### Added
+- **Multi-format session cost export (#118)**:
+  - Export session and turn-by-turn cost history to CSV (`generateSessionCsv`) with UTF-8 BOM (`﻿`) and CSV formula injection protection (`sanitizeCsvCell` for `=`, `+`, `-`, `@`, `	`, `` mitigating CWE-1236).
+  - Export structured session report to JSON (`generateSessionJson`) with schema versioning, model usage breakdown, and cache savings metrics.
+  - High-resolution HTML5 Canvas PNG summary card generator (`renderSummaryCardToCanvas`) with modern gradient background, key KPIs, and token distribution.
+  - Export toolbar buttons (`📥 CSV`, `📋 JSON`, `🖼️ PNG`) added to the popover session analytics view.
+- **In-popover instant currency switcher (#131)**:
+  - Instant currency selection chips in popover header (`$`, `¥`, `₽`, `€`) with zero-reload dynamic spend recalculation.
+  - Automatic exchange rates synchronization using Bank of Russia (CBR daily API) cached data via `/dsh-cost-meter/state`.
+  - Persists selected currency preference into plugin settings scope.
+  - Full EN and ZH localized strings for export formats and currency actions.
+
 ## 0.8.26
 
 ### Added
