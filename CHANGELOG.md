@@ -104,11 +104,30 @@
 
 # Changelog
 
+## 0.8.28
+
+### Added
+- **Reasoning & Thinking Tokens Metering (#144)**:
+  - Separate detection and extraction of reasoning/thinking tokens across provider schemas (`completion_tokens_details.reasoning_tokens`, `reasoningTokens`, `details.reasoning_tokens`).
+  - Added `reasoningTokens` in turn records and `usageByModelProjection`.
+  - Added `Reasoning_Tokens` column in CSV export with UTF-8 BOM, structured JSON output, and Canvas PNG summary card.
+  - Interactive `🧠 Thinking: {tokens}` chip in the per-turn inspector (`MessageTokenAction`) and turn history breakdown.
+  - Added thinking tokens metric in `/cost receipt` markdown table.
+- **Streamer / Privacy Mode (#121)**:
+  - Added volatile `privacyMode` toggle (`👁️` / `🕶️`) in the header popover toolbar and settings card.
+  - Masks financial spends with asterisks (`$••••`) across all visible UI surfaces while keeping token metrics and sparkline dynamics visible.
+  - Live zero-reload reactivity and persistent setting storage.
+- **Independent UI Element Visibility Settings (#165)**:
+  - Independent volatile settings `showHeaderChip` (default `true`) and `showMessageAction` (default `true`) in `Config` and UI settings card.
+  - Allows hiding the header chip or message action button while background token & cost tracking continues uninterrupted.
+  - Guaranteed alternative access to session stats and diagnostics via the plugin settings card (`plugins.item`) and `/cost` slash command.
+
 ## 0.8.27
 
 ### Added
 - **Multi-format session cost export (#118)**:
-  - Export session and turn-by-turn cost history to CSV (`generateSessionCsv`) with UTF-8 BOM (`﻿`) and CSV formula injection protection (`sanitizeCsvCell` for `=`, `+`, `-`, `@`, `	`, `` mitigating CWE-1236).
+  - Export session and turn-by-turn cost history to CSV (`generateSessionCsv`) with UTF-8 BOM (`﻿`) and CSV formula injection protection (`sanitizeCsvCell` for `=`, `+`, `-`, `@`, `	`, `
+` mitigating CWE-1236).
   - Export structured session report to JSON (`generateSessionJson`) with schema versioning, model usage breakdown, and cache savings metrics.
   - High-resolution HTML5 Canvas PNG summary card generator (`renderSummaryCardToCanvas`) with modern gradient background, key KPIs, and token distribution.
   - Export toolbar buttons (`📥 CSV`, `📋 JSON`, `🖼️ PNG`) added to the popover session analytics view.
