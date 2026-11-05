@@ -76,12 +76,12 @@ test('Issue #118: generateSessionCsv creates UTF-8 BOM CSV with turns and summar
   assert.ok(csv.includes('deepseek/deepseek-chat'))
 
   // Must include turn rows
-  assert.ok(csv.includes('1,0,deepseek/deepseek-chat,1000,4000,80,300,5300'))
-  assert.ok(csv.includes('2,0,deepseek/deepseek-chat,2000,6000,75,500,8500'))
+  assert.ok(csv.includes('1,0,deepseek/deepseek-chat,1000,4000,80,300,0,5300'))
+  assert.ok(csv.includes('2,0,deepseek/deepseek-chat,2000,6000,75,500,0,8500'))
 
   // Must include summary row
   assert.ok(csv.includes('TOTAL'))
-  assert.ok(csv.includes('3000,10000,77,800,13800'))
+  assert.ok(csv.includes('3000,10000,77,800,0,13800'))
 })
 
 test('Issue #118: generateSessionJson returns versioned structured JSON', () => {
