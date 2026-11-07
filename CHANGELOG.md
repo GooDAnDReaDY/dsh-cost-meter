@@ -104,6 +104,18 @@
 
 # Changelog
 
+## 0.8.32
+
+### Added
+- **Prompt Token Anatomy Inspector (#138)**:
+  - Added `analyzePromptAnatomy` decomposing session context into four categories: System prompt, Tools schema, Chat history, and Attachments/Current prompt.
+  - Rendered a multi-segment visual progress bar (`dcm-anatomy-bar`) in the popover panel with token counts and proportional percentages.
+  - Interactive legend identifying the biggest context contributors (e.g. oversized MCP tool declarations vs conversation history).
+- **Redundant Token & Loop Waste Detector (#145)**:
+  - Added `detectTokenWaste` analyzing consecutive conversation turns for unchanged large file dumps (>4000 tokens) and cyclical command repetitions.
+  - Quantifies wasted token count and computes dollar cost leakage based on active model tariffs.
+  - Contextual banner in popover panel with proactive remediation recommendations (`/compact` or pruning history).
+
 ## 0.8.31
 
 ### Added
