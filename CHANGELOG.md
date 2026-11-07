@@ -104,6 +104,18 @@
 
 # Changelog
 
+## 0.8.33
+
+### Added
+- **What-If Multi-Model Cost Comparator Simulator (#135)**:
+  - Added `simulateModelCosts` computing session cost if identical tokens were processed by industry reference models (DeepSeek V3, DeepSeek R1, Claude 3.5 Sonnet, GPT-4o, GPT-4o Mini).
+  - Compact simulator card in the session popover displaying model-by-model cost in local currency, percentage diffs, and active model marker.
+  - Highlights real-world financial savings vs Claude 3.5 Sonnet (e.g. *"Saved $2.14 (78%) vs Claude 3.5 Sonnet"*).
+- **Token Burn Rate Velocity Chart (#151)**:
+  - Added `getBurnRateSeries` generating per-turn token and cost metrics with automatic spike detection (>2.2x baseline or >12,000 tokens).
+  - Responsive inline SVG sparkline chart in session popover visualizing context accumulation and turn-by-turn velocity with interactive tooltips.
+  - Zero-hex styling strictly leveraging theme variables (`var(--dsw-alias-...)`) and `color-mix(...)`.
+
 ## 0.8.32
 
 ### Added
