@@ -104,6 +104,18 @@
 
 # Changelog
 
+## 0.8.34
+
+### Added
+- **Predictive Final Cost Forecasting Based on Moving Trajectory (#148)**:
+  - Added `calculateAdvancedTrajectoryForecast` in `lib/analytics.js` predicting final session cost using moving average step cost and acceleration trend detection.
+  - Computes predictive cost bounds (`minCostUsd` – `maxCostUsd`), confidence rating (`high` / `medium` / `low`), and trend direction (`Accelerating`, `Stable`, `Decelerating`).
+  - Rendered dedicated Trajectory Forecast card (`dcm-forecast-box`) in the session popover telemetry.
+- **Cost-Driven Dynamic Context Pruning Advisor (#147)**:
+  - Added `evaluatePruningTriggers` scanning conversation history for bloated past turns (>4,500 tokens of file dumps or tool responses).
+  - Identifies prune candidate step indices and computes estimated dollar savings per subsequent step.
+  - Interactive advisory banner (`dcm-pruning-box`) alerting the user when context overhead exceeds threshold with actionable step guidance.
+
 ## 0.8.33
 
 ### Added
