@@ -104,6 +104,20 @@
 
 # Changelog
 
+## 0.8.31
+
+### Added
+- **Cost Velocity Anomaly Detection & Runaway Loop Alert (#129)**:
+  - Added `calculateCostVelocity` in `lib/analytics.js` computing dynamic burn velocity ($/min) and average recent step cost across turns.
+  - Automatic runaway loop detector flagging abnormal spending spikes (e.g. > $0.50/min, 3x session baseline, or > $0.40/step).
+  - Emergency alert badge on header chip with pulsating danger border (`dcm-chip-runaway`), warning tooltip, and prominent alert banner in popover panel.
+  - Live velocity telemetry indicator (`Velocity: $X.XX/min`) in popover telemetry projection box.
+- **Radial SVG Donut Progress Ring (#161)**:
+  - Added zero-overhead SVG radial donut ring (`StatusRing`) wrapping the chip status dot with smooth 0.4s `stroke-dashoffset` CSS transitions.
+  - Real-time visual progress showing session budget consumption (when `budgetThreshold` is set) or context window saturation.
+  - Three-tier adaptive color shifts: Green/neutral (<70%), Warning yellow (70–90%), Danger red (≥90% or velocity anomaly).
+  - Full accessibility compliance respecting `prefers-reduced-motion` and strict theme variable styling.
+
 ## 0.8.30
 
 ### Fixed
