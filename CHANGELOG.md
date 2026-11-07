@@ -104,6 +104,17 @@
 
 # Changelog
 
+## 0.8.35
+
+### Added
+- **Command-Line Interface (CLI) Utility (#140)**:
+  - Added standalone executable `bin/dsh-cost-meter.js` (invokable via `dsh-cost-meter` or `npx @goodandready/dsh-cost-meter`).
+  - Formatted terminal table output displaying live session spend, active model/provider, context saturation, active tariffs, velocity, and trajectory forecast.
+  - Supports `--json` for CI/CD and automation scripts, `--port <port>`, and `--url <url>`.
+- **Automated Context Diagnostic Snapshot on Cost Spikes (#159)**:
+  - Added `captureDiagnosticSnapshot` in `lib/analytics.js` capturing turn index, token delta, velocity, highest-cost turn, and reason when velocity spikes are triggered.
+  - Exposes `latestSnapshot` in server state and displays a diagnostic snapshot inspection card (`dcm-snapshot-box`) in the popover telemetry.
+
 ## 0.8.34
 
 ### Added
