@@ -1,3 +1,16 @@
+## 0.8.40
+
+### Added
+- **Subagent & Multi-Agent Hierarchical Cost Attribution (#127)**:
+  - Added `lib/agents.js` with `extractAgentMeta` and `getAgentsSpendReport` to track `agentId`, `role`, and `subagentName` from DSH session event metadata.
+  - Enriched `turnRecordSchema` and projection turns to attribute input, cache, and output tokens per individual agent (e.g. Root coordinator, Researcher, Coder, Reviewer).
+  - Added hierarchical agent spend table in the Cost Meter popover displaying token counts, localized cost, percentage of session spend, and top-spender highlights.
+  - Guaranteed total session cost integrity by normalizing and prorating agent costs against the session total.
+- **Prompt Cache Optimization Advisor (#130)**:
+  - Added `lib/advisor.js` with `analyzeCacheEfficiency` implementing proactive heuristics for conversational sessions with 5+ turns.
+  - Detects suboptimal cache hit rates (< 40%) and provides actionable advice ("Tip: Pin static system prompts and tool schemas at the head of your context to increase cache hit ratio to 80%+ and cut costs by up to 50%").
+  - Added compact, non-intrusive notification badge and advice card in the Cost Meter popover.
+
 ## 0.8.39
 
 ### Added
