@@ -1,3 +1,9 @@
+## 0.8.38
+
+### Added
+- **Prometheus & OpenTelemetry Metrics Exporter Endpoint (`/dsh-cost-meter/metrics`)**: Added exporter endpoint outputting Prometheus standard exposition format (v0.0.4) for integration with Prometheus, Datadog, Grafana Agent, and OpenTelemetry collector. Exports metrics including `dsh_cost_total_usd`, `dsh_tokens_total` (by bucket), `dsh_session_burn_rate_usd_hour`, `dsh_cache_hit_ratio`, `dsh_budget_daily_limit_usd`, `dsh_budget_daily_spent_usd`, `dsh_budget_monthly_limit_usd`, `dsh_budget_monthly_spent_usd`, `dsh_budget_auto_paused`, and catalog metadata (#153).
+- **Daily and Monthly Hard Spending Caps with Auto-Pause**: Added persistent spend tracking across daily and monthly rolling windows stored safely in `~/.dsh/storages/dsh-cost-meter-budget.json`. Supported configurable `dailySpendLimitUsd`, `monthlySpendLimitUsd`, and `budgetHardBlock` with automatic day/month rollover handling and visual progress indicators in the UI popover and settings card (#134).
+
 ## 0.8.25
 
 ### Changed
