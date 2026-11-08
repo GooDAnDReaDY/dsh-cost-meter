@@ -129,6 +129,9 @@ dsh-cost-meter:
 | `monthlySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Hard monthly spending cap in USD (0 disables) |
 | `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Automatically pause LLM calls when spending cap is reached |
 | `exportPrometheusMetrics` | GUI / `settings.yaml` | `boolean` | `true` | Expose Prometheus metrics endpoint at `/dsh-cost-meter/metrics` |
+| `cacheKeepAliveEnabled` | GUI / `settings.yaml` | `boolean` | `false` | Automatically ping prompt cache before expiration to preserve 90% discount |
+| `cacheTtlMinutes` | GUI / `settings.yaml` | `number` | `10` | Prompt cache expiration window in minutes (1 to 60) |
+| `defaultSessionTag` | GUI / `settings.yaml` | `string` | `""` | Default client billing code or project tag (e.g. `client:acme`) |
 | `deepseekPeakPrices` | `settings.yaml` only | `object` | `{}` | Override built-in DeepSeek peak rates by model id |
 | `prices` | `settings.yaml` only | `object` | `{}` | Manual rates per 1M tokens `{ input, output, cacheHit?, cacheWrite? }` |
 | `modelMap` | `settings.yaml` only | `object` | `{}` | Route override: `"provider/model"` -> OpenRouter model id |

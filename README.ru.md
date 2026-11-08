@@ -129,6 +129,9 @@ dsh-cost-meter:
 | `monthlySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Месячный жесткий лимит расходов в USD (0 — выключен) |
 | `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Автоматическая блокировка/пауза запросов при превышении лимита |
 | `exportPrometheusMetrics` | GUI / `settings.yaml` | `boolean` | `true` | Эндпоинт метрик Prometheus `/dsh-cost-meter/metrics` |
+| `cacheKeepAliveEnabled` | GUI / `settings.yaml` | `boolean` | `false` | Автоматический микро-пинг для сохранения 90% скидки на промпт-кеш |
+| `cacheTtlMinutes` | GUI / `settings.yaml` | `number` | `10` | Время жизни кеша промпта в минутах (от 1 до 60) |
+| `defaultSessionTag` | GUI / `settings.yaml` | `string` | `""` | Код проекта или клиента по умолчанию (например, `client:acme`) |
 | `deepseekPeakPrices` | Только `settings.yaml` | `object` | `{}` | Переопределение встроенных пиковых ставок DeepSeek по id модели |
 | `prices` | Только `settings.yaml` | `object` | `{}` | Ручные ставки за 1M токенов `{ input, output, cacheHit?, cacheWrite? }` |
 | `modelMap` | Только `settings.yaml` | `object` | `{}` | Сопоставление маршрута `"provider/model"` на id в OpenRouter |

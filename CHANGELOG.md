@@ -1,3 +1,15 @@
+## 0.8.39
+
+### Added
+- **Prompt Cache Keep-Alive Pre-Warming Scheduler (#158)**:
+  - Added `lib/warmup.js` with `getCacheTtlStatus` and `performCacheWarmup` to prevent prompt cache expiration (5–10 min provider TTL) during conversational pauses, preserving up to 90% prompt discounts.
+  - Added configurable `cacheKeepAliveEnabled`, `cacheTtlMinutes` (1–60 min), and `cacheMaxInactivityMinutes` (safety idle cut-off at 30 min).
+  - Added dedicated endpoint `POST /dsh-cost-meter/warmup` and live cache TTL countdown with manual "Pre-warm" button in the Cost Meter popover.
+- **Client Billing Codes and Multi-Tenant Project Tagging (#157)**:
+  - Added `lib/tags.js` for assigning session costs to project/client cost centers with persistent storage at `~/.dsh/storages/dsh-cost-meter-tags.json`.
+  - Added endpoints `POST /dsh-cost-meter/session-tag` and `GET /dsh-cost-meter/tags` for dynamic tagging and spend attribution reports.
+  - Added `defaultSessionTag` configuration and active billing tag pill in the conversation popover.
+
 ## 0.8.38
 
 ### Added
