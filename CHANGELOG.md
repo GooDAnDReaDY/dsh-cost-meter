@@ -104,6 +104,14 @@
 
 # Changelog
 
+## 0.8.37
+
+### Security & Quality Fixes
+- **CLI Input Validation**: Validated `--port` parameter (strictly integer 1-65535) and restricted `--url` parameter strictly to `http:` and `https:` protocols.
+- **DoS Protection in State Route**: Bounded `extraRoutes` query parameters to a maximum of 50 routes per request to prevent compute starvation.
+- **Robust Trailer Parsing**: Constrained git trailer regex parsing to the trailing message paragraph in accordance with RFC 2822 conventions to eliminate false positives in message bodies.
+- **Bounds Sanitization in Middle-Truncation**: Enforced positive integer bounds on `headLines`, `tailLines`, and `maxTokens` to eliminate backwards array slice edge cases.
+
 ## 0.8.36
 
 ### Added
