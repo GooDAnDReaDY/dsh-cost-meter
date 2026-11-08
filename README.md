@@ -125,6 +125,10 @@ dsh-cost-meter:
 | `displayTimeZone` | GUI / `settings.yaml` | `string` | `"Europe/Moscow"` | IANA timezone for peak/off-peak windows formatting |
 | `useOpenRouter` | GUI / `settings.yaml` | `boolean` | `true` | Automatically fetch rates & discount windows from OpenRouter |
 | `refreshHours` | GUI / `settings.yaml` | `number` | `24` | Hours between periodic OpenRouter catalog updates |
+| `dailySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Hard daily spending cap in USD (0 disables) |
+| `monthlySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Hard monthly spending cap in USD (0 disables) |
+| `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Automatically pause LLM calls when spending cap is reached |
+| `exportPrometheusMetrics` | GUI / `settings.yaml` | `boolean` | `true` | Expose Prometheus metrics endpoint at `/dsh-cost-meter/metrics` |
 | `deepseekPeakPrices` | `settings.yaml` only | `object` | `{}` | Override built-in DeepSeek peak rates by model id |
 | `prices` | `settings.yaml` only | `object` | `{}` | Manual rates per 1M tokens `{ input, output, cacheHit?, cacheWrite? }` |
 | `modelMap` | `settings.yaml` only | `object` | `{}` | Route override: `"provider/model"` -> OpenRouter model id |

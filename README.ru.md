@@ -125,6 +125,10 @@ dsh-cost-meter:
 | `displayTimeZone` | GUI / `settings.yaml` | `string` | `"Europe/Moscow"` | IANA часовой пояс для отображения окон пика и не-пика |
 | `useOpenRouter` | GUI / `settings.yaml` | `boolean` | `true` | Загружать ли каталог тарифов и скидочных окон OpenRouter |
 | `refreshHours` | GUI / `settings.yaml` | `number` | `24` | Частота обновления каталога OpenRouter (в часах) |
+| `dailySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Дневной жесткий лимит расходов в USD (0 — выключен) |
+| `monthlySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Месячный жесткий лимит расходов в USD (0 — выключен) |
+| `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Автоматическая блокировка/пауза запросов при превышении лимита |
+| `exportPrometheusMetrics` | GUI / `settings.yaml` | `boolean` | `true` | Эндпоинт метрик Prometheus `/dsh-cost-meter/metrics` |
 | `deepseekPeakPrices` | Только `settings.yaml` | `object` | `{}` | Переопределение встроенных пиковых ставок DeepSeek по id модели |
 | `prices` | Только `settings.yaml` | `object` | `{}` | Ручные ставки за 1M токенов `{ input, output, cacheHit?, cacheWrite? }` |
 | `modelMap` | Только `settings.yaml` | `object` | `{}` | Сопоставление маршрута `"provider/model"` на id в OpenRouter |
