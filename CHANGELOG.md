@@ -104,6 +104,18 @@
 
 # Changelog
 
+## 0.8.36
+
+### Added
+- **Git Commit Trailer Cost Attribution (#143)**:
+  - Added `lib/git-trailer.js` generating standard RFC-compliant Git trailers (`Token-Cost`, `Tokens-Input`, `Tokens-Output`, `Tokens-Cache-Hit`, `Model`) for commits created during agent sessions.
+  - Implemented `appendCostTrailers` and `parseGitCommitTrailers` for appending and extracting financial metadata from commit logs.
+  - Added configurable toggle `gitCommitTrailers` in `Config` schema and `CostMeterCard` settings.
+- **Smart Middle-Truncation Context Protection (#154)**:
+  - Added `lib/truncation.js` implementing `smartMiddleTruncate` to auto-compact oversized tool outputs (e.g. huge git diffs or test logs) while preserving critical head and tail diagnostics.
+  - Added configurable threshold (`truncationMaxTokens`) and enable/disable toggle (`smartTruncation`) in plugin settings card.
+  - Added dollar savings estimation (`calculateTruncationSavings`).
+
 ## 0.8.35
 
 ### Added
