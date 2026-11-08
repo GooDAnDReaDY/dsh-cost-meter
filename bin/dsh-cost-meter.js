@@ -39,13 +39,29 @@ Examples:
 let port = 3005
 const portIdx = args.indexOf('--port')
 if (portIdx !== -1 && args[portIdx + 1]) {
-  port = Number(args[portIdx + 1]) || 3005
+  const p = parseInt(args[portIdx + 1], 10)
+  if (Number.isInteger(p) && p > 0 && p <= 65535) {
+    port = p
+  } else {
+    console.error(`Invalid port "${args[portIdx + 1]}". Must be between 1 and 65535.`)
+    process.exit(1)
+  }
 }
 
 let url = process.env.DSH_COST_METER_URL || `http://127.0.0.1:${port}/dsh-cost-meter/state`
 const urlIdx = args.indexOf('--url')
 if (urlIdx !== -1 && args[urlIdx + 1]) {
   url = args[urlIdx + 1]
+}
+
+try {
+  const parsed = new URL(url)
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new Error('Only http and https protocols are supported')
+  }
+} catch (e) {
+  console.error(`Invalid URL "${url}": ${e.message}`)
+  process.exit(1)
 }
 
 async function main() {
