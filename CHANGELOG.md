@@ -1,3 +1,11 @@
+## [0.8.42] - 2026-11-09
+
+### Fixed
+- **Core Cost Attribution**: Calculated actual turn cost (`costDeltaUsd`) and aggregated `sessionTotalUsd` in `lib/projection.js` and `lib/routes.js`, eliminating zero-cost propagation to agent attribution, velocity, and burn-rate projections (Issue #181).
+- **Persistent Storage Wiring**: Fully wired `recordSpend`, `recordTagSpend`, and `recordCacheActivity` on token usage events, keeping budget records, client billing tags, and cache keep-alive TTL countdowns synchronized with actual turns (Issue #181).
+- **Code Quality & Error Resilience**: Replaced 9 empty `catch {}` blocks across host and client modules with resilient error handling avoiding silenced runtime failures (Issue #181).
+- **Test Coverage**: Added `test/issue-181-audit-fixes.test.mjs` verifying accurate cost estimation, storage recording, and zero empty catches across `lib/` (175 tests passing total).
+
 ## 0.8.41
 
 ### Fixed
