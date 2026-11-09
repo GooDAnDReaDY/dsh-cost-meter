@@ -1,3 +1,10 @@
+## 0.8.41
+
+### Fixed
+- **React Error #310 Hooks Order Invariant (#179)**:
+  - Eliminated Minified React Error #310 ("Rendered more hooks than during the previous render") by moving desktop tariff notification hook unconditionally to the top of `CostMeter` before any component early returns (`if (!state) return null`, `if (!showHeaderChip) return null`, and fallback chip return).
+  - Added regression test `test/issue-179-react-310.test.mjs` verifying that all hooks in `CostMeter` appear strictly before any return statements.
+
 ## 0.8.40
 
 ### Added
