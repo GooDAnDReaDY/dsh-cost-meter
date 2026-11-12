@@ -13,10 +13,7 @@ dist/
 coverage/
 .worktrees/
 
-# Internal service and agent workflow files (dhs-plugin-release-workflow denylist)
-AGENTS.md
-index.md
-deploy.sh
+# Ephemeral plans and agent workspaces
 release-notes.md
 .planning/
 openwiki/
@@ -26,4 +23,3 @@ progress.md
 docs/plans/
 docs/testing/
 docs/deployment/
-docs/design/

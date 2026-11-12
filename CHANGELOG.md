@@ -1,3 +1,12 @@
+## [0.8.43] - 2026-11-12
+
+### Fixed
+- **Zero-Hex & Zero-RGBA Theming Compliance (#185)**: Replaced all 23 hardcoded color literals in `renderSummaryCardToCanvas` (`lib/client.js`, `lib/export.js`) with dynamic CSS variable lookups (`getCanvasColor`) and `rgb(...)` fallbacks, achieving 0 hex and 0 rgba in client code.
+- **Wired Uncalled Exports (#186)**: Connected `checkTariffAlert`, `formatAlertMessage`, and `getActiveTariffRates` to state route payload (`lib/routes.js`), added Route 8 `POST /dsh-cost-meter/budget/reset` calling `resetBudgetCaps`, and wired `resetCacheActivity` into `resetLastTurns` (`lib/projection.js`).
+- **Security & Dependency Audit (#187)**: Bumped `zod` to `^4.6.7` (resolving high-severity GHSA-mrhx-c7xc-m3w5), pinned `packageManager` to `npm@10.9.8`, generated `package-lock.json`, verified 0 vulnerabilities via `npm audit --omit=dev`.
+- **Packaging Integrity & Artifact Cleanup (#184)**: Removed untracked root release tarballs and added `scripts/pack-check.mjs` running on `npm test` and `npm run check` to enforce file sizes <= 256KB and clean workspace root.
+- **Documentation & Automation Contracts (#183)**: Added canonical `docs/design/DESIGN.md`, `AGENTS.md`, `index.md`, and executable `deploy.sh` for Gitea repository management while preserving strict exclusion from npm package and public GitHub mirror.
+
 ## [0.8.42] - 2026-11-09
 
 ### Fixed

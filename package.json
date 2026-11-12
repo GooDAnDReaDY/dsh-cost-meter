@@ -1,6 +1,6 @@
 {
   "name": "@goodandready/dsh-cost-meter",
-  "version": "0.8.42",
+  "version": "0.8.43",
   "description": "DeepSeek Harness plugin: a session cost chip in the conversation header - live token usage by bucket, peak/off-peak tariff, and a countdown to the next tariff switch.",
   "type": "module",
   "main": "lib/index.js",
@@ -48,7 +48,10 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test"
+    "test": "node scripts/pack-check.mjs && node --test",
+    "check": "node --check lib/*.js && node scripts/pack-check.mjs",
+    "pack:check": "node scripts/pack-check.mjs",
+    "audit": "npm audit --omit=dev"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
@@ -58,9 +61,10 @@
     "@deepseek-ai/schemastery": "^3.18.1"
   },
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "bin": {
     "dsh-cost-meter": "bin/dsh-cost-meter.js"
-  }
+  },
+  "packageManager": "npm@10.9.8"
 }
