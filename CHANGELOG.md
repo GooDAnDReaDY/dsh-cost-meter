@@ -1,3 +1,12 @@
+## [0.8.44] - 2026-11-27
+
+### Fixed
+- **Runtime Crashes Eliminated (#189)**: Fixed `ReferenceError: hours is not defined` in `ago()` (settings card crash after 60m) and `ReferenceError: isPrivacy is not defined` in `renderSparkline()` (popover crash on sessions with turns).
+- **Accurate Server-Side Pricing & Diagnostics (#189)**: Resolved active model & peak/off-peak rates via `ratesAt(own.schedule, minuteOfDay)` instead of nonexistent `own.rates`, fixing turn cost estimation, budgets, tags, metrics, and subagent attribution. Fixed positional arguments in `captureDiagnosticSnapshot(turnsList, costVelocity, route)`.
+- **Route Security & Method Enforcement (#190)**: Added `kind: 'exact'` and strict `req.method` checks (`405 Method Not Allowed` with `Allow` header, `HEAD` support on `GET` routes) across all 7 routes in `lib/routes.js`; eliminated all 3 remaining empty `.catch(() => {})` calls in `lib/client.js` (`dsh-plugin-preflight` now passes with `FAIL=0`).
+- **Localization, Settings Save & DSH Theme Tokens (#191)**: Added `locale: NS` to header and message slots plus `ctx.locale.bind(NS)` fallback (restoring full `dsh-russian-lang` translation); added missing `turn.turn_step` key; fixed `alertLeadMinutes` saved as number instead of string; replaced 5 nonexistent `--dsw-alias-*` CSS tokens with real DSH core tokens; fixed CLI default port (`3080`), `deploy.sh` updater URL, rate-limit `retryAfterMs` conversion, and blob URL revocation.
+- **Dead Stub Cleanup & Docs Alignment (#192, #193)**: Removed unwired out-of-scope UI toggles (`gitCommitTrailers`, `smartTruncation`, fake prewarm button/alert), clarified budget cap alert flag wording, eliminated remaining `#hex` literals in `lib/export.js`, aligned `README.md`/`README.zh.md`/`README.ru.md` defaults & links (removing forbidden changelog tails), and added Route Policy & Published Artifacts sections to `docs/design/DESIGN.md`.
+
 ## [0.8.43] - 2026-11-12
 
 ### Fixed

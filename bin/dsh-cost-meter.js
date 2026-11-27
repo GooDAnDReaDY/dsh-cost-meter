@@ -23,20 +23,20 @@ Usage: dsh-cost-meter [options]
 
 Options:
   --json             Output raw JSON state
-  --port <port>      Specify DSH webServer port (default: 3005)
-  --url <url>        Specify full state URL (default: http://127.0.0.1:3005/dsh-cost-meter/state)
+  --port <port>      Specify DSH webServer port (default: 3080)
+  --url <url>        Specify full state URL (default: http://127.0.0.1:3080/dsh-cost-meter/state)
   -v, --version      Show version
   -h, --help         Show this help message
 
 Examples:
   dsh-cost-meter
   dsh-cost-meter --json
-  dsh-cost-meter --port 3005
+  dsh-cost-meter --port 3080
 `)
   process.exit(0)
 }
 
-let port = 3005
+let port = 3080
 const portIdx = args.indexOf('--port')
 if (portIdx !== -1 && args[portIdx + 1]) {
   const p = parseInt(args[portIdx + 1], 10)

@@ -127,7 +127,7 @@ dsh-cost-meter:
 | `refreshHours` | GUI / `settings.yaml` | `number` | `24` | Hours between periodic OpenRouter catalog updates |
 | `dailySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Hard daily spending cap in USD (0 disables) |
 | `monthlySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Hard monthly spending cap in USD (0 disables) |
-| `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Automatically pause LLM calls when spending cap is reached |
+| `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Highlight cap overrun flag in UI and Prometheus metrics when spending cap is reached |
 | `exportPrometheusMetrics` | GUI / `settings.yaml` | `boolean` | `true` | Expose Prometheus metrics endpoint at `/dsh-cost-meter/metrics` |
 | `cacheKeepAliveEnabled` | GUI / `settings.yaml` | `boolean` | `false` | Automatically ping prompt cache before expiration to preserve 90% discount |
 | `cacheTtlMinutes` | GUI / `settings.yaml` | `number` | `10` | Prompt cache expiration window in minutes (1 to 60) |
@@ -155,16 +155,3 @@ npm test
 ## 📄 License
 
 MIT © [GooDAnDReaDY](https://github.com/GooDAnDReaDY)
-
-### Performance & Smart Cost Features (v0.8.1)
-- **O(K) Rate Change Calculation**: Next schedule transition is resolved in $O(K)$ boundary hops instead of full-day iterations.
-- **Server Cache & ETag**: High-throughput state polling with `304 Not Modified` support and internal tariff LRU cache.
-- **Manual Catalog Sync**: On-demand catalog fetch via `POST /dsh-cost-meter/refresh` or UI "Sync Now" button.
-- **Savings Advice & Budget Threshold**: Popover hints on impending off-peak discounts (50% off) and optional warning thresholds (`budgetThreshold`).
-- **Quick Summary Export**: Instant markdown/text summary copy to clipboard.
-
-### UI Refinements & Language Standards (v0.8.2)
-- **Native Dot Status Indicator**: Header chip uses a refined status dot (green for off-peak, amber for peak, pulsing red for budget overrun, neutral for flat/idle) rather than full-fill backgrounds.
-- **Context Cache Savings**: Automatically calculates and highlights financial savings gained from prompt caching (e.g. `Cache saved: ≈ $0.14 (-68%)`).
-- **Multi-Model Accordion**: Clean collapsible list when 3 or more models are used in a single session.
-- **DSH Locale Standards**: Full English (`en`) and Chinese (`zh`) locale dictionaries registered directly in the client bundle. Russian translations are provided externally via `@goodandready/dsh-russian-lang`.

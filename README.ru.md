@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-cost-meter"><img src="https://img.shields.io/npm/v/@goodandready/dsh-cost-meter.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
-  <a href="../LICENSE"><img src="https://img.shields.io/github/license/GooDAnDReaDY/dsh-cost-meter.svg?style=for-the-badge&color=10b981&labelColor=064e3b" alt="license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/GooDAnDReaDY/dsh-cost-meter.svg?style=for-the-badge&color=10b981&labelColor=064e3b" alt="license"></a>
   <a href="https://github.com/topics/dsh-plugin"><img src="https://img.shields.io/badge/DSH-Plugin-8b5cf6.svg?style=for-the-badge&labelColor=2e1065" alt="DSH Plugin"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node-20%2B-f59e0b.svg?style=for-the-badge&labelColor=451a03" alt="Node version"></a>
 </p>
@@ -120,14 +120,14 @@ dsh-cost-meter:
 
 | Параметр | Доступность | Тип | По умолчанию | Описание |
 |:---|:---|:---|:---|:---|
-| `currency` | GUI / `settings.yaml` | `string` | `"₽"` | Символ валюты в интерфейсе (например, `₽`, `$`, `€`) |
-| `usdRate` | GUI / `settings.yaml` | `number` | `80.0` | Курс обмена: единиц валюты за 1 USD |
+| `currency` | GUI / `settings.yaml` | `string` | `"$"` | Символ валюты в интерфейсе (например, `₽`, `$`, `€`) |
+| `usdRate` | GUI / `settings.yaml` | `number` | `1.0` | Курс обмена: единиц валюты за 1 USD |
 | `displayTimeZone` | GUI / `settings.yaml` | `string` | `"Europe/Moscow"` | IANA часовой пояс для отображения окон пика и не-пика |
 | `useOpenRouter` | GUI / `settings.yaml` | `boolean` | `true` | Загружать ли каталог тарифов и скидочных окон OpenRouter |
 | `refreshHours` | GUI / `settings.yaml` | `number` | `24` | Частота обновления каталога OpenRouter (в часах) |
 | `dailySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Дневной жесткий лимит расходов в USD (0 — выключен) |
 | `monthlySpendLimitUsd` | GUI / `settings.yaml` | `number` | `0` | Месячный жесткий лимит расходов в USD (0 — выключен) |
-| `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Автоматическая блокировка/пауза запросов при превышении лимита |
+| `budgetHardBlock` | GUI / `settings.yaml` | `boolean` | `false` | Флаг предупреждения в UI и метриках Prometheus при превышении лимита |
 | `exportPrometheusMetrics` | GUI / `settings.yaml` | `boolean` | `true` | Эндпоинт метрик Prometheus `/dsh-cost-meter/metrics` |
 | `cacheKeepAliveEnabled` | GUI / `settings.yaml` | `boolean` | `false` | Автоматический микро-пинг для сохранения 90% скидки на промпт-кеш |
 | `cacheTtlMinutes` | GUI / `settings.yaml` | `number` | `10` | Время жизни кеша промпта в минутах (от 1 до 60) |
@@ -155,9 +155,3 @@ npm test
 ## 📄 Лицензия
 
 MIT © [GooDAnDReaDY](https://github.com/GooDAnDReaDY)
-
-### Производительность и интеллектуальные подсказки (v0.8.1)
-- **Алгоритм O(K)**: Моментальный расчёт границ смены тарифов и мемоизация экстремумов без лишних циклов в браузере.
-- **Серверный кэш и ETag**: Поддержка заголовка `304 Not Modified` для маршрута `/state` и кэширование сопоставлений моделей.
-- **Ручная синхронизация**: Кнопка «Синхронизировать сейчас» в настройках с защитой от флуда (`POST /dsh-cost-meter/refresh`).
-- **Подсказки экономии и порог бюджета**: Отсчёт времени до льготного окна (скидка 50%), порог сессии (`budgetThreshold`) и экспорт сводки в буфер обмена.

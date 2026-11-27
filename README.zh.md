@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-cost-meter"><img src="https://img.shields.io/npm/v/@goodandready/dsh-cost-meter.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
-  <a href="../LICENSE"><img src="https://img.shields.io/github/license/GooDAnDReaDY/dsh-cost-meter.svg?style=for-the-badge&color=10b981&labelColor=064e3b" alt="license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/GooDAnDReaDY/dsh-cost-meter.svg?style=for-the-badge&color=10b981&labelColor=064e3b" alt="license"></a>
   <a href="https://github.com/topics/dsh-plugin"><img src="https://img.shields.io/badge/DSH-Plugin-8b5cf6.svg?style=for-the-badge&labelColor=2e1065" alt="DSH Plugin"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node-20%2B-f59e0b.svg?style=for-the-badge&labelColor=451a03" alt="Node version"></a>
 </p>
@@ -120,11 +120,17 @@ dsh-cost-meter:
 
 | 参数项 | 类型 | 默认值 | 说明 |
 |:---|:---|:---|:---|
-| `currency` | `string` | `"¥"` | 显示的货币符号或代码 |
-| `usdRate` | `number` | `7.2` | 美元到目标货币的换算汇率 |
-| `displayTimeZone` | `string` | `"Asia/Shanghai"` | 界面中优惠时间段显示的参考时区 |
+| `currency` | `string` | `"$"` | 显示的货币符号或代码 |
+| `usdRate` | `number` | `1.0` | 美元到目标货币的换算汇率 |
+| `displayTimeZone` | `string` | `"Europe/Moscow"` | 界面中优惠时间段显示的参考时区 |
 | `useOpenRouter` | `boolean` | `true` | 是否加载 OpenRouter 价格表作为备用 |
 | `prices` | `object` | `{}` | 自定义每 1M Token 的费率覆盖 |
+| `refreshHours` | `number` | `24` | OpenRouter 价格目录自动刷新间隔（小时） |
+| `dailySpendLimitUsd` | `number` | `0` | 每日花费上限（USD，0 为关闭） |
+| `monthlySpendLimitUsd` | `number` | `0` | 每月花费上限（USD，0 为关闭） |
+| `budgetHardBlock` | `boolean` | `false` | 达到上限时在界面与 Prometheus 指标中标记告警 |
+| `exportPrometheusMetrics` | `boolean` | `true` | 是否开放 `/dsh-cost-meter/metrics` Prometheus 指标端点 |
+| `defaultSessionTag` | `string` | `""` | 默认项目/客户计费标签 |
 | `modelMap` | `object` | `{}` | 模型别名映射表 |
 
 ---
